@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agenda sabbatique</title>
+<meta name="theme-color" content="#2F5BEA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Agenda">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#E9F0EF;--surface:#FFFFFF;--soft:#F1F6F5;--ink:#1F2F3F;--muted:#556879;--line:#CFDBDA;
+  --accent:#2F5BEA;--accent-ink:#FFFFFF;--accent-soft:#DCE5FF;--ok:#18794E;--warn:#A9461A;--focus:#F2B134;--danger:#B3261E;
+  --display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13202B;--surface:#1C2B38;--soft:#223341;--ink:#E7EEF3;--muted:#9DB0BF;--line:#2D4151;
+    --accent:#86A2FF;--accent-ink:#0F1B2A;--accent-soft:#25365F;--ok:#52C490;--warn:#F0955E;--danger:#FF8A80;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13202B;--surface:#1C2B38;--soft:#223341;--ink:#E7EEF3;--muted:#9DB0BF;--line:#2D4151;
+  --accent:#86A2FF;--accent-ink:#0F1B2A;--accent-soft:#25365F;--ok:#52C490;--warn:#F0955E;--danger:#FF8A80;
+}
+*,*::before,*::after{box-sizing:inherit;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%;}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);}
+button,input,textarea{font:inherit;color:inherit;}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;}
+h1,h2,h3{font-family:var(--display);margin:0;letter-spacing:-.01em;}
+h1{font-size:1.7rem;line-height:1.1;}
+h2{font-size:1.3rem;}
+h3{font-size:1.05rem;}
+p{margin:.4em 0;}
+.muted{color:var(--muted);}
+.ok{color:var(--ok);font-weight:600;}
+.warn{color:var(--warn);font-weight:500;}
+.app{max-width:1180px;margin:0 auto;padding:14px 16px 56px;}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:6px 0 12px;}
+.sub{margin:.3em 0 0;color:var(--muted);}
+.streak{background:var(--focus);color:#1F2F3F;font-weight:700;border-radius:999px;padding:6px 12px;font-size:.85rem;white-space:nowrap;}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:11;display:flex;gap:2px;overflow-x:auto;background:var(--bg);border-bottom:1px solid var(--line);margin:0 -16px 16px;padding:0 16px;}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:11px 14px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--accent);}
+.grid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr);}
+@media (min-width:900px){
+  .grid.day{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:start;}
+  .grid.mods{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;}
+  .grid.mods .wide{grid-column:1/-1;}
+}
+.col{display:grid;gap:14px;min-width:0;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0;}
+.row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.row.small{font-size:.9rem;}
+.k{font-weight:700;margin:0 0 4px;}
+.big{font-family:var(--display);font-size:1.5rem;font-weight:700;margin:.15em 0;}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:baseline;}
+
+/* scène */
+.scene{position:relative;aspect-ratio:400/260;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#8fb0c4;}
+.scene svg{position:absolute;inset:0;width:100%;height:100%;display:block;transition:opacity .7s ease;}
+.scene svg.off{opacity:0;pointer-events:none;}
+.now-chip{position:absolute;left:10px;top:10px;display:grid;gap:1px;background:rgba(255,255,255,.94);color:#1F2F3F;border-radius:12px;padding:6px 12px;font-size:.85rem;max-width:70%;}
+.now-chip span{color:#4A5C6C;}
+.hint{position:absolute;left:10px;bottom:8px;background:rgba(255,255,255,.88);color:#34495B;border-radius:999px;padding:3px 10px;font-size:.72rem;}
+.zz{animation:zfloat 2.4s ease-in-out infinite;}
+.zz2{animation:zfloat 2.4s ease-in-out .8s infinite;}
+@keyframes zfloat{0%,100%{opacity:.2;transform:translateY(4px);}50%{opacity:1;transform:translateY(-3px);}}
+.bob{animation:bob .6s ease-in-out infinite alternate;}
+@keyframes bob{from{transform:translateY(0);}to{transform:translateY(-5px);}}
+.legA,.legB,.armA,.armB{transform-box:fill-box;transform-origin:50% 0;}
+.legA{animation:swA .5s ease-in-out infinite alternate;}
+.legB{animation:swB .5s ease-in-out infinite alternate;}
+.armA{animation:swB .5s ease-in-out infinite alternate;}
+.armB{animation:swA .5s ease-in-out infinite alternate;}
+.slow{animation-duration:.9s!important;}
+@keyframes swA{from{transform:rotate(28deg);}to{transform:rotate(-28deg);}}
+@keyframes swB{from{transform:rotate(-28deg);}to{transform:rotate(28deg);}}
+
+/* contrôles */
+.ctrl{display:flex;align-items:center;gap:10px;}
+.ctrl input[type=range]{flex:1;min-width:0;accent-color:var(--accent);height:32px;}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.btns.pad{margin-top:14px;}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;min-height:44px;}
+.btn.alt{background:var(--accent-soft);color:var(--ink);}
+.btn.danger{background:var(--danger);color:#fff;}
+.btn.sm{padding:6px 12px;min-height:36px;font-size:.9rem;}
+.btn:active{transform:translateY(1px);}
+.ghost{background:none;border:0;color:var(--accent);font-weight:600;cursor:pointer;padding:4px 6px;}
+.tag{font-size:.75rem;color:var(--warn);font-weight:700;}
+.focus .row{margin-bottom:6px;}
+.timer{font-family:var(--display);font-size:3rem;font-weight:700;line-height:1;margin:6px 0;font-variant-numeric:tabular-nums;}
+.next{border-left:5px solid var(--accent);}
+.plain{list-style:none;margin:.4em 0;padding:0;display:grid;gap:4px;}
+.plain li{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+
+/* chronologie */
+.tl{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:4px;}
+.tl-i{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 10px;border-left:5px solid var(--line);background:var(--soft);border-radius:0 8px 8px 0;}
+.tl-i.now{background:var(--accent-soft);outline:2px solid var(--focus);}
+.tl-i.missed{opacity:.6;}
+.tl-i.done .tl-l{text-decoration:line-through;opacity:.7;}
+.tl-t{font-variant-numeric:tabular-nums;font-size:.88rem;color:var(--muted);}
+.tl-l small{color:var(--muted);}
+.dur{font-size:.8rem;color:var(--muted);}
+.chk{border:1.5px solid var(--accent);background:none;color:var(--accent);border-radius:999px;padding:4px 12px;font-weight:700;font-size:.82rem;cursor:pointer;min-height:32px;}
+.chk.on{background:var(--ok);border-color:var(--ok);color:#fff;}
+.top3 ol{margin:.2em 0 0;padding-left:20px;}
+.top3 li{margin:2px 0;}
+
+.tl-btn{background:none;border:0;padding:0;text-align:left;font-weight:600;cursor:pointer;color:var(--ink);text-decoration:underline dotted var(--muted);text-underline-offset:4px;}
+.tl-act{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;padding:4px 0 2px;}
+.form{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:10px 0;}
+.fld.col{flex-direction:column;align-items:stretch;gap:4px;margin:0;}
+.fld.col span{font-size:.85rem;color:var(--muted);}
+select{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:40px;max-width:100%;}
+.fld.col input[type=text],.fld.col input[type=time]{width:100%;text-align:left;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:40px;}
+.btns.tight{margin:0;gap:2px;}
+.plain.ev li{align-items:flex-start;flex-wrap:wrap;}
+.daily{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;}
+
+.chipcol{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.streak.alt{background:var(--accent-soft);color:var(--ink);}
+.why{margin:0;padding:10px 14px;border-left:5px solid var(--focus);background:var(--surface);border-radius:0 10px 10px 0;font-family:var(--display);font-weight:600;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
+.chip{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:600;font-size:.88rem;cursor:pointer;color:var(--ink);}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;width:max-content;}
+.seg button{background:var(--soft);border:0;padding:8px 14px;font-weight:700;cursor:pointer;color:var(--ink);min-height:40px;}
+.seg button.on{background:var(--accent);color:var(--accent-ink);}
+.bilan summary{cursor:pointer;font-weight:700;font-family:var(--display);font-size:1.05rem;}
+.bars{display:flex;align-items:flex-end;gap:8px;height:150px;margin-top:8px;}
+.bcol{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;}
+.bstack{position:relative;flex:1;width:100%;max-width:38px;}
+.bstack i{position:absolute;left:0;right:0;bottom:0;border-radius:4px 4px 0 0;display:block;}
+.bstack .pl{background:var(--accent-soft);}
+.bstack .dn{background:var(--accent);}
+.bcol span{font-size:.75rem;font-weight:700;}
+.bcol small{font-size:.66rem;color:var(--muted);}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,16px);grid-auto-columns:minmax(0,1fr);gap:4px;max-width:420px;}
+.hc{display:block;border-radius:3px;background:var(--soft);border:1px solid var(--line);}
+.hc.l1{background:#B9D3FF;border-color:#B9D3FF;}
+.hc.l2{background:#6F96F0;border-color:#6F96F0;}
+.hc.l3{background:#2F5BEA;border-color:#2F5BEA;}
+.hc.lf{opacity:.35;}
+.flash{text-align:center;}
+.fcard{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:22px 12px;margin:10px 0;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:10px;}
+.ff{font-family:var(--display);font-size:1.7rem;font-weight:700;overflow-wrap:anywhere;}
+.ff.arab{font-size:4.2rem;line-height:1.2;font-weight:400;}
+.fb{font-size:1.1rem;color:var(--ink);}
+.flash .btns{justify-content:center;}
+textarea{font:inherit;}
+input[type=color]{padding:2px;height:40px;width:64px;background:var(--soft);border:1px solid var(--line);border-radius:8px;}
+input[type=date]{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:40px;}
+.card.inner{background:var(--soft);margin-top:12px;}
+.lvl{color:var(--accent);margin:6px 0 0;}
+
+/* semaine */
+.wk-wrap{overflow-x:auto;}
+.wk{display:grid;grid-template-columns:44px repeat(7,minmax(104px,1fr));min-width:780px;}
+.wk-ax{position:relative;}
+.wk-ax span{position:absolute;right:6px;font-size:.72rem;color:var(--muted);transform:translateY(-50%);}
+.wk-c{border-left:1px solid var(--line);}
+.wk-c.today .wk-h{color:var(--accent);}
+.wk-h{height:34px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.wk-b{position:relative;}
+.wk-k{position:absolute;left:2px;right:2px;border:0;border-left:4px solid;border-radius:4px;padding:1px 4px;text-align:left;font-size:.72rem;line-height:1.15;overflow:hidden;color:var(--ink);cursor:pointer;display:block;}
+.wk-k small{display:block;color:var(--muted);font-size:.66rem;}
+.wk-k.done{opacity:.55;}
+.wk-k.missed{opacity:.4;}
+
+/* modules */
+.bar{display:block;position:relative;height:8px;border-radius:99px;background:var(--soft);overflow:hidden;margin:8px 0;}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;}
+.fld{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0;flex-wrap:wrap;}
+.fld-in{display:inline-flex;align-items:center;gap:6px;}
+.fld input,.add input,textarea{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:40px;min-width:0;}
+.fld input[type=text]{width:90px;text-align:right;}
+.fld-in input[type=time]{width:auto;}
+.fld em{font-style:normal;color:var(--muted);}
+.road{margin-top:10px;border-top:1px solid var(--line);padding-top:8px;}
+.road summary{cursor:pointer;font-weight:600;}
+.cb{display:inline-flex;align-items:center;gap:8px;cursor:pointer;}
+.cb input{width:18px;height:18px;accent-color:var(--accent);}
+.add{display:flex;gap:8px;margin:10px 0;}
+.add input{flex:1;}
+.add.two{flex-wrap:wrap;}
+.add.two input:first-child{flex:0 0 130px;}
+textarea{width:100%;resize:vertical;margin-top:8px;}
+.shifts{display:grid;gap:6px;margin-top:8px;}
+.shift{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:6px 0;border-top:1px solid var(--line);}
+.shift .cb{min-width:110px;font-weight:600;}
+.tin{display:inline-flex;align-items:center;gap:6px;}
+.tin input{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:6px 8px;}
+.days{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0;}
+.spark{width:100%;height:70px;margin:6px 0;}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;max-width:90vw;z-index:20;}
+
+@media (max-width:560px){
+  h1{font-size:1.45rem;}
+  .tl-i{grid-template-columns:82px minmax(0,1fr) auto;}
+  .timer{font-size:2.6rem;}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script>
+(function(){
+'use strict';
+const {useState,useEffect,useMemo,useCallback}=React;
+const h=React.createElement;
+
+/* ---------- constantes ---------- */
+const KEY='agenda-sabbatique-v1';
+const DAYS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+const DS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+const pad=n=>String(n).padStart(2,'0');
+const fmt=m=>{if(m>=1440)return '24:00';m=Math.max(0,Math.round(m));return pad(Math.floor(m/60))+':'+pad(m%60);};
+const toT=m=>pad(Math.floor(m/60))+':'+pad(m%60);
+const fromT=s=>{const a=String(s).split(':').map(Number);return (a[0]||0)*60+(a[1]||0);};
+const durL=m=>m>=60?Math.floor(m/60)+' h'+(m%60?' '+pad(m%60):''):m+' min';
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function addDays(iso,n){const d=new Date(iso+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
+const frDate=iso=>iso.slice(8,10)+'/'+iso.slice(5,7);
+
+const BASE_STUDY=[
+ {id:'maths',nom:'Maths',quota:300,len:50,energy:'high',color:'#2F5BEA',niveau:'Départ : niveau 1re, début de Terminale',note:'Remise à niveau de la 1re d’abord, puis la Terminale : 20 min de cours, 30 min d’exercices chronométrés.'},
+ {id:'physique',nom:'Physique',quota:240,len:45,energy:'high',color:'#8A4FD6',niveau:'Départ : niveau seconde',note:'Un chapitre à la fois : cours, formules à connaître, puis 5 exercices simples.'},
+ {id:'svt',nom:'SVT',quota:150,len:50,energy:'high',color:'#1E9E6A',niveau:'Terminale déjà vue, beaucoup oublié',note:'Relecture active du cours, un schéma-bilan, puis des questions de cours.'},
+ {id:'arabe',nom:'Arabe littéraire',quota:240,len:30,energy:'high',color:'#D9822B',niveau:'Débutant : alphabet',note:'Séances courtes et fréquentes : lettres, sons, écriture, puis lecture de syllabes.'},
+ {id:'anglais',nom:'Anglais',quota:180,len:40,energy:'low',color:'#1B9AAA',niveau:'Niveau A2, objectif B1',note:'Grammaire de base, 10 mots nouveaux, écoute de contenus lents, un court texte à écrire.'},
+ {id:'coran',nom:'Coran',quota:180,len:40,energy:'low',color:'#C2477A',niveau:'',note:'Nouveau passage, révision de ce qui est appris, tajwid.'},
+ {id:'revenus',nom:'Revenus en ligne',quota:300,len:60,energy:'high',color:'#C99A06',niveau:'',note:'Un seul projet à la fois : produire, publier, mesurer.'}
+];
+const STUDY=BASE_STUDY.slice();
+const DAILY=[
+ {id:'menage',nom:'Ménage',color:'#6F8294',note:'30 minutes, une zone par jour.'},
+ {id:'culture',nom:'Culture générale',color:'#D1495B',note:'25 minutes sur le domaine de la semaine.'},
+ {id:'sport',nom:'Sport',color:'#E4572E',note:'Séance douce, progressive.'}
+];
+const MOD={};STUDY.concat(DAILY).forEach(m=>MOD[m.id]=m);
+const BASE_LOOK={};STUDY.concat(DAILY).forEach(m=>{BASE_LOOK[m.id]={nom:m.nom,color:m.color};});
+function syncCustom(S){
+ STUDY.length=BASE_STUDY.length;
+ (S.customMods||[]).forEach(c=>{
+  const m={id:c.id,nom:c.nom||'Module',quota:c.quota||120,len:c.len||40,energy:c.energy||'any',color:c.color||'#7A8B99',niveau:'',note:c.note||'Module personnalisé.',custom:true};
+  BASE_LOOK[c.id]={nom:m.nom,color:m.color};
+  STUDY.push(m);MOD[c.id]=m;
+ });
+ STUDY.concat(DAILY).forEach(m=>{
+  const o=(S.mods&&S.mods[m.id])||(S.daily&&S.daily[m.id])||{};
+  m.nom=o.nom||BASE_LOOK[m.id].nom;m.color=o.color||BASE_LOOK[m.id].color;
+ });
+}
+const ARABIC=[['ا','Alif','« aa » long, ou support de la voyelle'],['ب','Bā’','b'],['ت','Tā’','t'],['ث','Thā’','« th » de « think »'],['ج','Jīm','j'],['ح','Ḥā’','h soufflé, du fond de la gorge'],['خ','Khā’','« kh », comme la jota espagnole'],['د','Dāl','d'],['ذ','Dhāl','« th » de « this »'],['ر','Rā’','r roulé'],['ز','Zāy','z'],['س','Sīn','s'],['ش','Shīn','« ch » de « chat »'],['ص','Ṣād','s emphatique (grave)'],['ض','Ḍād','d emphatique (grave)'],['ط','Ṭā’','t emphatique (grave)'],['ظ','Ẓā’','« dh » emphatique (grave)'],['ع','ʿAyn','son guttural, propre à l’arabe'],['غ','Ghayn','« gh », proche du r français'],['ف','Fā’','f'],['ق','Qāf','q, un k du fond de la gorge'],['ك','Kāf','k'],['ل','Lām','l'],['م','Mīm','m'],['ن','Nūn','n'],['ه','Hā’','h léger'],['و','Wāw','w, ou « ou » long (ū)'],['ي','Yā’','y, ou « i » long (ī)']];
+const INTERVALS=[0,1,2,4,8,16,32];
+const ZONES=['Chambre','Salle de bain','Cuisine','Salon et entrée','Linge','Frigo et courses','Grand rangement'];
+const TYPE_COL={sleep:'#5B5BA6',work:'#5A6B7B',prep:'#8A99A8',routine:'#A0907A',meal:'#C48A4A',pause:'#7FB59B',libre:'#B8C4C2',imprevu:'#C0504D',event:'#7A5CC9',todo:'#D9822B'};
+const DEFAULT_ROAD={
+ maths:['Remise à niveau 1re : calcul, équations, inéquations','Second degré','Fonctions et dérivation (1re)','Suites arithmétiques et géométriques','Trigonométrie','Probabilités (1re)','Produit scalaire et géométrie','Terminale : suites, récurrence et limites','Limites de fonctions et continuité','Dérivation, convexité','Fonction logarithme','Fonction exponentielle','Primitives et équations différentielles','Intégration','Dénombrement','Probabilités conditionnelles et loi binomiale','Géométrie dans l’espace'],
+ physique:['Bases : unités, grandeurs, conversions','Description d’un mouvement','Forces et principe d’inertie','Lumière et signaux','Atome, ions, constitution de la matière','Transformations chimiques : mole et quantité de matière','Électricité : circuits, loi d’Ohm','Énergie, travail, puissance','Ondes et son','Lois de Newton','Énergie mécanique','Thermodynamique de base'],
+ svt:['Remise à niveau : cellule, ADN, enzymes','Génétique et évolution','Mitose, méiose, brassage génétique','Immunité','Neurones et fibre musculaire','Climats du passé et cycle du carbone','Géologie : dynamique de la lithosphère','Écosystèmes et agrosystèmes'],
+ arabe:['Les 28 lettres : noms et sons','Les formes de chaque lettre (début, milieu, fin)','Les voyelles courtes (fatha, damma, kasra)','Soukoun et chadda','Voyelles longues et tanwin','Lire des syllabes, puis des mots','100 mots du quotidien','Pronoms et phrase nominale','Le verbe au passé : bases','Lire des textes simples vocalisés'],
+ anglais:['Revoir les temps de base : présent, passé, futur','500 mots de vocabulaire courant','Compréhension orale A2 : dialogues lents','Parler : se présenter, décrire, raconter','Present perfect','Modaux et conditionnel','Comparatifs et superlatifs','Écrire un court mail','Podcasts à vitesse normale','Test de niveau pour valider B1']
+};
+const MODDEF={};STUDY.forEach(m=>{MODDEF[m.id]={len:m.len,energy:m.energy,days:[0,1,2,3,4,5,6],max:2};});
+const DEFAULTS={
+ shifts:[[360,870],[360,870],[360,720],[720,1110],[1020,1350],null,null],
+ prep:30,commute:30,sleepH:8,eve:30,wakeCap:480,weekdayCap:180,weekendCap:360,
+ pomoWork:50,pomoBreak:10,sportHome:false,workName:'Basic Fit',weightTarget:'',
+ why:'',examDate:'',examLabel:'',sound:true,todoCapWd:90,todoCapWe:180,customMods:[],
+ meals:{lunch:750,dinner:1170,dur:45},
+ quota:(function(){const q={};STUDY.forEach(m=>q[m.id]=m.quota);return q;})(),
+ mods:MODDEF,
+ daily:{
+  sport:{dur:35,days:[2,4,6],from:900,to:1080},
+  menage:{dur:30,days:[0,1,2,3,4,5,6],from:840,to:1200},
+  culture:{dur:25,days:[0,1,2,3,4,5,6],from:1050,to:1380}
+ }
+};
+const EVK={rdv:'Rendez-vous',imprevu:'Imprévu',seance:'Séance planifiée',libre:'Temps réservé',autre:'Autre'};
+const EVC={rdv:'#7A5CC9',imprevu:'#C0504D',libre:'#8A9BA8',autre:'#B5651D'};
+function mergeS(sv){
+ sv=sv||{};
+ const S=Object.assign({},DEFAULTS,sv);
+ S.customMods=Array.isArray(sv.customMods)?sv.customMods:[];
+ syncCustom({customMods:S.customMods});
+ S.quota=Object.assign({},DEFAULTS.quota,sv.quota||{});
+ S.mods={};
+ STUDY.forEach(m=>{
+  S.mods[m.id]=Object.assign({len:m.len,energy:m.energy,days:[0,1,2,3,4,5,6],max:2},(sv.mods||{})[m.id]);
+  if(S.quota[m.id]===undefined)S.quota[m.id]=m.quota;
+ });
+ S.daily={};['sport','menage','culture'].forEach(k=>{S.daily[k]=Object.assign({},DEFAULTS.daily[k],(sv.daily||{})[k]);});
+ if(Array.isArray(sv.sportDays)&&!(sv.daily&&sv.daily.sport))S.daily.sport.days=sv.sportDays;
+ S.meals=Object.assign({},DEFAULTS.meals,sv.meals||{});
+ if(!Array.isArray(S.shifts)||S.shifts.length!==7)S.shifts=DEFAULTS.shifts;
+ syncCustom(S);
+ return S;
+}
+const blockKey=b=>b.d+'|'+b.s+'|'+b.type+'|'+(b.mod||'');
+const colorOf=b=>b.color?b.color:b.type==='task'?((MOD[b.mod]||{}).color||'#888888'):(TYPE_COL[b.type]||'#888888');
+
+/* ---------- heure de Paris ---------- */
+function parisNow(){
+ const p=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Paris',weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
+ const o={};p.forEach(x=>o[x.type]=x.value);
+ const day=Math.max(0,['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].indexOf(o.weekday));
+ const iso=o.year+'-'+o.month+'-'+o.day;
+ return {day:day,min:(parseInt(o.hour,10)%24)*60+parseInt(o.minute,10),iso:iso,week:addDays(iso,-day)};
+}
+
+/* ---------- export calendrier (.ics) ---------- */
+const icsEsc=t=>String(t).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+function icsDate(iso,m){let d=iso;if(m>=1440){d=addDays(iso,1);m-=1440;}return d.replace(/-/g,'')+'T'+pad(Math.floor(m/60))+pad(m%60)+'00';}
+function buildICS(plan,weekIso,o){
+ const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Agenda sabbatique//FR','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:Agenda sabbatique','X-WR-TIMEZONE:Europe/Paris'];
+ const stamp=new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';
+ plan.days.forEach((dd,d)=>{
+  const iso=addDays(weekIso,d);
+  dd.blocks.forEach(b=>{
+   if(b.missed)return;
+   const t=b.type;
+   const ok=((t==='task'||t==='todo')&&o.study)||((t==='event'||t==='imprevu')&&o.events)||(t==='work'&&o.work)||((t==='routine'||t==='meal')&&o.rest);
+   if(!ok)return;
+   L.push('BEGIN:VEVENT','UID:'+['ag',weekIso,d,b.s,t,b.mod||'x'].join('-')+'@agenda-sabbatique','DTSTAMP:'+stamp,'DTSTART:'+icsDate(iso,b.s),'DTEND:'+icsDate(iso,b.e),'SUMMARY:'+icsEsc(b.label));
+   if(o.alarm>=0)L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(b.label),'TRIGGER:'+(o.alarm>0?'-PT'+Math.round(o.alarm)+'M':'PT0S'),'END:VALARM');
+   L.push('END:VEVENT');
+  });
+ });
+ L.push('END:VCALENDAR');
+ return L.join('\r\n')+'\r\n';
+}
+
+/* ---------- moteur de planification ---------- */
+function wakeOf(d,S,evts){
+ let w=S.wakeCap;const sh=S.shifts[d];
+ if(sh)w=Math.min(w,sh[0]-S.prep-S.commute);
+ (evts||[]).forEach(e=>{if(e.d===d&&e.kind!=='libre'&&e.kind!=='imprevu')w=Math.min(w,e.s-(e.tb||0)-S.prep);});
+ return Math.max(0,w);
+}
+function bedOf(d,S,evts){
+ const n=(d+1)%7;
+ let b=Math.min(1440,1440+wakeOf(n,S,evts)-Math.round(S.sleepH*60));
+ (evts||[]).forEach(e=>{if(e.d===d&&e.kind!=='libre'&&e.kind!=='imprevu')b=Math.max(b,Math.min(1440,e.e+(e.ta||0)+S.eve));});
+ const sh=S.shifts[d];
+ if(sh)b=Math.max(b,Math.min(1440,sh[1]+S.commute+S.eve));
+ return Math.max(b,wakeOf(d,S,evts)+120);
+}
+function carve(free,s,e){
+ const out=[],pieces=[];
+ for(const iv of free){
+  const a=iv[0],b=iv[1];
+  if(e<=a||s>=b){out.push([a,b]);continue;}
+  const ia=Math.max(a,s),ib=Math.min(b,e);
+  pieces.push([ia,ib]);
+  if(a<ia)out.push([a,ia]);
+  if(ib<b)out.push([ib,b]);
+ }
+ return {free:out,pieces:pieces};
+}
+const fits=(free,s,e)=>free.some(iv=>iv[0]<=s&&e<=iv[1]);
+function findSpot(free,dur,win,late){
+ const w0=win?win[0]:0,w1=win?win[1]:1440;
+ const list=late?free.slice().reverse():free;
+ for(const iv of list){
+  const lo=Math.max(iv[0],w0),hi=Math.min(iv[1],w1);
+  if(hi-lo>=dur)return late?hi-dur:lo;
+ }
+ return null;
+}
+function planDay(d,S,rem,o){
+ const from=o.from||0,prev=o.prev||[],isDone=o.done||function(){return false;},evts=o.evts||[];
+ const evs=evts.filter(e=>e.d===d);
+ const sh=S.shifts[d],wake=wakeOf(d,S,evts),bed=bedOf(d,S,evts),M=S.meals;
+ const blocks=[];let free=[[0,1440]];
+ const take=(s,e,p)=>{
+  s=Math.max(0,s);e=Math.min(1440,e);if(e<=s)return;
+  const r=carve(free,s,e);free=r.free;
+  r.pieces.forEach(pc=>{if(pc[1]>pc[0])blocks.push(Object.assign({},p,{s:pc[0],e:pc[1],d:d}));});
+ };
+ take(0,wake,{type:'sleep',label:'Sommeil',scene:'sleep'});
+ take(bed,1440,{type:'sleep',label:'Sommeil',scene:'sleep'});
+ /* rendez-vous, imprévus et séances placées à la main : priorité sur tout sauf le sommeil */
+ evs.forEach(e=>{
+  if(e.tb>0)take(e.s-e.tb,e.s,{type:'prep',label:'Trajet : '+(e.title||'rendez-vous'),scene:'walkTo'});
+  if(e.kind==='seance'&&MOD[e.mod]){
+   const scn=e.mod==='sport'?(S.sportHome?'sporthome':'run'):e.mod==='menage'?'clean':'desk';
+   take(e.s,e.e,{type:'task',mod:e.mod,label:MOD[e.mod].nom,scene:scn,pin:true,evId:e.id});
+  }else{
+   take(e.s,e.e,{type:'event',kind:e.kind,label:e.title||EVK[e.kind]||'Événement',scene:e.kind==='libre'?'bed':(e.loc==='dehors'?'out':'desk'),color:e.color||EVC[e.kind]||'#7A5CC9',mod:'ev'+e.id,evId:e.id});
+  }
+  if(e.ta>0)take(e.e,e.e+e.ta,{type:'prep',label:'Retour : '+(e.title||'rendez-vous'),scene:'walkBack'});
+ });
+ blocks.forEach(b=>{if(b.pin&&b.e<=from&&!isDone(b))b.missed=true;});
+ if(sh){
+  take(sh[0],sh[1],{type:'work',label:S.workName||'Travail',scene:'work'});
+  take(sh[0]-S.commute,sh[0],{type:'prep',label:'Trajet vers le travail',scene:'walkTo'});
+  take(sh[1],sh[1]+S.commute,{type:'prep',label:'Retour à la maison',scene:'walkBack'});
+ }
+ take(wake,wake+S.prep,{type:'routine',label:'Réveil et routine du matin',scene:'armoire'});
+ take(bed-S.eve,bed,{type:'routine',label:'Routine du soir',scene:'armoire'});
+ const meal=(c,label)=>{for(const s of c){if(fits(free,s,s+M.dur)){take(s,s+M.dur,{type:'meal',label:label,scene:'meal'});return;}}};
+ meal([M.lunch,M.lunch-30,M.lunch+30,M.lunch+60,M.lunch-75,M.lunch-105],'Déjeuner');
+ meal([M.dinner,M.dinner-30,M.dinner+30,M.dinner-60,M.dinner-90],'Dîner');
+ /* imprévu annoncé aujourd'hui */
+ const drop=o.x&&o.x.drop;
+ if(o.x&&o.x.add)take(o.x.add.s,o.x.add.e,{type:'imprevu',label:'Imprévu',scene:'bed'});
+ /* blocs conservés lors d'une replanification */
+ prev.forEach(p=>{
+  if(p.type==='imprevu'){const r0=carve(free,p.s,p.e);free=r0.free;blocks.push(p);return;}
+  if(p.pin)return;
+  if(['task','todo','pause','libre'].indexOf(p.type)<0||p.s>=from)return;
+  if(drop&&p.s>=drop[0]&&p.s<drop[1])return;
+  let q;
+  if(p.type==='task'||p.type==='todo'){
+   q=Object.assign({},p);
+   if(drop&&p.s<drop[0]&&p.e>drop[0]){q.e=drop[0];if(!isDone(p))q.missed=true;}
+   else if(!isDone(p)&&!(p.e>from))q.missed=true;
+  }else{
+   const cut=drop?drop[0]:from;
+   q=p.e>cut?Object.assign({},p,{e:cut}):p;
+  }
+  const r=carve(free,q.s,q.e);free=r.free;
+  const got=r.pieces.reduce((a,pc)=>a+pc[1]-pc[0],0);
+  if(got>=q.e-q.s-1||(q.type==='task'&&isDone(q)))blocks.push(q);
+ });
+ if(from>0)free=free.map(iv=>[Math.max(iv[0],from),iv[1]]).filter(iv=>iv[1]-iv[0]>0);
+ /* activités quotidiennes (durée, créneau et jours réglables) */
+ const have={};blocks.forEach(b=>{if(b.type==='task'&&!b.missed)have[b.mod]=1;});
+ [['sport',false,S.sportHome?'sporthome':'run'],['menage',false,'clean'],['culture',true,'desk']].forEach(t=>{
+  const id=t[0],dc=S.daily[id];
+  if(dc.days.indexOf(d)<0||have[id]||dc.dur<5)return;
+  const win=[dc.from,dc.to];
+  let st=findSpot(free,dc.dur,win,t[1]);
+  if(st===null)st=findSpot(free,dc.dur,null,t[1]);
+  if(st===null)return;
+  take(st,st+dc.dur,{type:'task',mod:id,label:MOD[id].nom,scene:t[2]});
+ });
+ /* blocs d'étude */
+ const weekend=d>=5,capMul=(S.capMul&&S.capMul[d]!==undefined)?S.capMul[d]:1,cap=Math.round((weekend?S.weekendCap:S.weekdayCap)*capMul);
+ let used=0;const cnt={};
+ blocks.forEach(b=>{if(b.type==='task'&&!b.missed&&rem[b.mod]!==undefined){used+=b.e-b.s;cnt[b.mod]=(cnt[b.mod]||0)+1;}});
+ let last=null;
+ free.map(iv=>iv.slice()).forEach(iv=>{
+  let t=iv[0];const end=iv[1];
+  while(end-t>=25&&cap-used>=15){
+   const early=t<1020;
+   const c=STUDY.filter(m=>{const ms=S.mods[m.id];return rem[m.id]>=15&&ms.days.indexOf(d)>=0&&(cnt[m.id]||0)<ms.max&&m.id!==last;});
+   if(!c.length)break;
+   const sc=m=>{const en=S.mods[m.id].energy;return rem[m.id]+(en==='any'?75:(((en==='high')===early)?150:0));};
+   c.sort((a,b)=>sc(b)-sc(a));
+   const m=c[0],len=Math.min(S.mods[m.id].len,rem[m.id],end-t,cap-used);
+   if(len<15)break;
+   take(t,t+len,{type:'task',mod:m.id,label:m.nom,scene:'desk'});
+   rem[m.id]-=len;used+=len;cnt[m.id]=(cnt[m.id]||0)+1;last=m.id;t+=len;
+   if(cap-used>=15&&end-t>=30){const pz=Math.min(S.pomoBreak,end-t);take(t,t+pz,{type:'pause',label:'Pause',scene:'bed'});t+=pz;}
+  }
+ });
+ free.forEach(iv=>{if(iv[1]-iv[0]>=15)blocks.push({d:d,s:iv[0],e:iv[1],type:'libre',label:'Temps libre',scene:'bed'});});
+ blocks.sort((x,y)=>x.s-y.s||x.e-y.e);
+ return {d:d,wake:wake,bed:bed,blocks:blocks};
+}
+function placeTodos(days,S,todos,from){
+ const list=todos.filter(t=>!t.done).slice().sort((a,b)=>{
+  const da=(a.due===null||a.due===undefined)?9:a.due,db=(b.due===null||b.due===undefined)?9:b.due;
+  return da-db||(b.prio-a.prio)||(a.dur-b.dur);
+ });
+ const used=days.map(dd=>dd.blocks.filter(b=>b.type==='todo'&&!b.missed).reduce((a,b)=>a+b.e-b.s,0));
+ const un=[];
+ list.forEach(t=>{
+  let ok=false;
+  const d0=from?Math.min(from.d,6):0;
+  for(let d=d0;d<7&&!ok;d++){
+   if(t.due!==null&&t.due!==undefined&&d>t.due)break;
+   const capd=d>=5?S.todoCapWe:S.todoCapWd;
+   if(used[d]+t.dur>capd)continue;
+   const bl=days[d].blocks;
+   for(let pass=0;pass<2&&!ok;pass++)for(let i=0;i<bl.length&&!ok;i++){
+    const b=bl[i];
+    if(b.type!=='libre')continue;
+    const lo=Math.max(b.s,(from&&d===from.d)?from.m:0);
+    if(b.e-lo<t.dur)continue;
+    if(pass===0&&lo+t.dur>1290)continue;
+    const nb=[];
+    if(lo-b.s>=15)nb.push(Object.assign({},b,{e:lo}));
+    nb.push({d:d,s:lo,e:lo+t.dur,type:'todo',mod:'t'+t.id,tid:t.id,label:t.title,scene:'desk'});
+    if(b.e-(lo+t.dur)>=15)nb.push(Object.assign({},b,{s:lo+t.dur}));
+    bl.splice.apply(bl,[i,1].concat(nb));
+    used[d]+=t.dur;ok=true;
+   }
+  }
+  if(!ok)un.push(t.id);
+ });
+ return un;
+}
+function buildPlan(S,prevPlan,isDone,from,x,ctx){
+ const evts=(ctx&&ctx.evts)||[],todos=(ctx&&ctx.todos)||[];
+ const rem={};STUDY.forEach(m=>rem[m.id]=Math.max(0,+S.quota[m.id]||0));
+ const days=[];
+ evts.forEach(e=>{
+  if(e.kind!=='seance'||rem[e.mod]===undefined)return;
+  const past=from&&(e.d<from.d||(e.d===from.d&&e.e<=from.m));
+  if(past&&!isDone({d:e.d,s:e.s,type:'task',mod:e.mod}))return;
+  rem[e.mod]=Math.max(0,rem[e.mod]-(e.e-e.s));
+ });
+ if(!from){
+  [5,6,0,1,2,3,4].forEach(d=>{days[d]=planDay(d,S,rem,{evts:evts});});
+ }else{
+  for(let d=0;d<=from.d&&d<7;d++){
+   const lim=d<from.d?1440:from.m;
+   prevPlan.days[d].blocks.forEach(b=>{
+    if(b.pin)return;
+    if(x&&x.drop&&d===from.d&&b.s>=x.drop[0]&&b.s<x.drop[1])return;
+    if(b.type==='task'&&rem[b.mod]!==undefined&&b.s<lim&&(isDone(b)||b.e>lim))rem[b.mod]=Math.max(0,rem[b.mod]-(b.e-b.s));
+   });
+  }
+  for(let d=0;d<7;d++){
+   days[d]=planDay(d,S,rem,{from:d<from.d?1440:d===from.d?from.m:0,prev:d<=from.d?prevPlan.days[d].blocks:[],done:isDone,x:d===from.d?x:null,evts:evts});
+  }
+ }
+ const unT=placeTodos(days,S,todos,from);
+ return {days:days,rem:rem,unT:unT};
+}
+function blockAt(plan,d,m){
+ const bs=plan.days[d].blocks;
+ let f=null;
+ for(const b of bs){if(b.s<=m&&m<b.e){if(!b.missed)return b;f=f||b;}}
+ return f;
+}
+
+/* ---------- couleurs du ciel ---------- */
+const SKY=[[0,'#0D1736','#1B2B5A'],[6,'#17235A','#3B467E'],[7.25,'#6A8FD0','#F5B98A'],[8.75,'#7DB8EA','#C4E5F6'],[16.5,'#7DB8EA','#C4E5F6'],[17.75,'#6C8BCB','#F4A97B'],[19,'#2B3A78','#7D5E94'],[20.5,'#0D1736','#1B2B5A'],[24,'#0D1736','#1B2B5A']];
+const hexv=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16));
+const mix=(a,b,t)=>{const A=hexv(a),B=hexv(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('');};
+function sky(hh){
+ for(let i=0;i<SKY.length-1;i++){
+  const a=SKY[i],b=SKY[i+1];
+  if(hh>=a[0]&&hh<=b[0]){const t=(hh-a[0])/((b[0]-a[0])||1);return [mix(a[1],b[1],t),mix(a[2],b[2],t)];}
+ }
+ return [SKY[0][1],SKY[0][2]];
+}
+function night(hh){if(hh<6||hh>=20)return 1;if(hh<8)return 1-(hh-6)/2;if(hh<17)return 0;return (hh-17)/3;}
+function body(hh){
+ if(hh>=7&&hh<18)return {sun:true,p:(hh-7)/11};
+ const t=hh>=18?hh-18:hh+6;
+ return {sun:false,p:Math.min(1,t/13)};
+}
+
+/* ---------- dessin du personnage ---------- */
+const SKIN='#C48B62',HAIR='#2A2018';
+function headS(cx,cy){
+ return '<circle cx="'+cx+'" cy="'+cy+'" r="12" fill="'+SKIN+'"/><path d="M'+(cx-12.5)+' '+(cy-2)+' Q'+(cx-12)+' '+(cy-15)+' '+cx+' '+(cy-14.5)+' Q'+(cx+12)+' '+(cy-15)+' '+(cx+12.5)+' '+(cy-2)+' Q'+(cx+6)+' '+(cy-8)+' '+(cx-12.5)+' '+(cy-2)+'Z" fill="'+HAIR+'"/>';
+}
+function char(x,pose,o){
+ o=o||{};
+ const shirt=o.shirt||'#E9A23B',pants=o.pants||'#33415C',y=o.y===undefined?215:o.y;
+ let g='';
+ if(pose==='sit'){
+  const L=o.legH||33;
+  g+='<rect x="9" y="'+(-L)+'" width="8" height="'+L+'" rx="3" fill="'+pants+'"/>';
+  g+='<rect x="-14" y="'+(-L-9)+'" width="32" height="10" rx="4" fill="'+pants+'"/>';
+  g+='<g transform="rotate(7 -6 '+(-L-9)+')"><rect x="-17" y="'+(-L-47)+'" width="22" height="40" rx="9" fill="'+shirt+'"/>'+headS(-4,-L-59)+'</g>';
+  if(o.arm==='desk')g+='<path d="M-4 '+(-L-36)+' Q18 '+(-L-30)+' 50 '+(-L-17)+'" stroke="'+shirt+'" stroke-width="7" stroke-linecap="round" fill="none"/><circle cx="51" cy="'+(-L-17)+'" r="4" fill="'+SKIN+'"/>';
+  else g+='<path d="M-4 '+(-L-36)+' Q6 '+(-L-22)+' 12 '+(-L-14)+'" stroke="'+shirt+'" stroke-width="7" stroke-linecap="round" fill="none"/><circle cx="13" cy="'+(-L-13)+'" r="4" fill="'+SKIN+'"/>';
+ }else if(pose==='run'||pose==='walk'){
+  const k=pose==='run'?'':' slow';
+  g+='<rect class="legA'+k+'" x="-4" y="-38" width="8" height="38" rx="3" fill="'+pants+'"/><rect class="legB'+k+'" x="-4" y="-38" width="8" height="38" rx="3" fill="'+pants+'"/>';
+  g+='<g transform="rotate('+(pose==='run'?10:3)+' 0 -38)"><rect x="-11" y="-76" width="22" height="42" rx="9" fill="'+shirt+'"/>'+headS(2,-88)+'<rect class="armA'+k+'" x="-3" y="-72" width="6" height="28" rx="3" fill="'+shirt+'"/><rect class="armB'+k+'" x="-3" y="-72" width="6" height="28" rx="3" fill="'+shirt+'"/></g>';
+ }else if(pose==='sport'){
+  g+='<g class="bob"><rect x="-13" y="-38" width="9" height="38" rx="3" fill="'+pants+'" transform="rotate(8 -8 -38)"/><rect x="4" y="-38" width="9" height="38" rx="3" fill="'+pants+'" transform="rotate(-8 8 -38)"/><rect x="-11" y="-76" width="22" height="42" rx="9" fill="'+shirt+'"/>'+headS(0,-88)+'<path d="M-9 -70L-24 -108M9 -70L24 -108" stroke="'+shirt+'" stroke-width="6" stroke-linecap="round"/><circle cx="-24" cy="-109" r="4" fill="'+SKIN+'"/><circle cx="24" cy="-109" r="4" fill="'+SKIN+'"/></g>';
+ }else{
+  g+='<rect x="-9" y="-38" width="8" height="38" rx="3" fill="'+pants+'"/><rect x="1" y="-38" width="8" height="38" rx="3" fill="'+pants+'"/><rect x="-11" y="-76" width="22" height="42" rx="9" fill="'+shirt+'"/>'+headS(0,-88);
+  if(o.arm==='up')g+='<rect x="-17" y="-72" width="6" height="30" rx="3" fill="'+shirt+'"/><path d="M8 -70L26 -84" stroke="'+shirt+'" stroke-width="6" stroke-linecap="round"/><circle cx="27" cy="-85" r="4" fill="'+SKIN+'"/>';
+  else if(o.broom)g+='<rect x="-17" y="-72" width="6" height="30" rx="3" fill="'+shirt+'"/><path d="M8 -68L20 -50" stroke="'+shirt+'" stroke-width="6" stroke-linecap="round"/><path d="M18 -62L30 -2" stroke="#8A6745" stroke-width="3" stroke-linecap="round"/><path d="M24 -8L38 -8L40 0L26 0Z" fill="#C9A66B"/>';
+  else g+='<rect x="-17" y="-72" width="6" height="30" rx="3" fill="'+shirt+'"/><rect x="11" y="-72" width="6" height="30" rx="3" fill="'+shirt+'"/>';
+ }
+ return '<g transform="translate('+x+' '+y+')'+(o.flip?' scale(-1 1)':'')+'">'+g+'</g>';
+}
+
+/* ---------- la chambre ---------- */
+function roomSVG(sc,m){
+ const hh=m/60,c=sky(hh),nt=night(hh),bd=body(hh),pose=sc.pose;
+ const sx=192+96*bd.p,sy=100-Math.sin(Math.PI*bd.p)*54;
+ const stars=[[200,48],[215,60],[232,44],[250,56],[268,46],[280,64],[205,86],[258,90],[225,78]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.4" fill="#fff" opacity="'+(nt*0.9).toFixed(2)+'"/>').join('');
+ const sm=bd.sun?'<circle cx="'+sx+'" cy="'+sy+'" r="9" fill="#FFD66B"/>':'<circle cx="'+sx+'" cy="'+sy+'" r="8" fill="#F4F1E1"/><circle cx="'+(sx+3)+'" cy="'+(sy-2)+'" r="7" fill="'+c[0]+'" opacity=".85"/>';
+ const dk=pose==='sleep'?Math.min(0.6,0.18+nt*0.45):nt*0.34;
+ const study=pose==='desk'||pose==='meal';
+ const open=pose==='armoire'||pose==='clean';
+ let s='<defs><linearGradient id="skR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+c[0]+'"/><stop offset="1" stop-color="'+c[1]+'"/></linearGradient><clipPath id="wcR"><rect x="192" y="36" width="96" height="72"/></clipPath></defs>';
+ s+='<rect width="400" height="214" fill="#D7E3D8"/><rect y="214" width="400" height="46" fill="#B98B5E"/><path d="M0 226H400M0 238H400M0 250H400" stroke="#A97B4F" stroke-width="1.5"/><rect y="208" width="400" height="7" fill="#EFEBE0"/>';
+ s+='<rect x="186" y="30" width="108" height="84" rx="4" fill="#8C6B4E"/><rect x="192" y="36" width="96" height="72" fill="url(#skR)"/><g clip-path="url(#wcR)">'+stars+sm+'</g><path d="M240 36V108M192 72H288" stroke="#F3F0E8" stroke-width="3"/><rect x="176" y="26" width="12" height="96" rx="3" fill="#7FA6C4"/><rect x="292" y="26" width="12" height="96" rx="3" fill="#7FA6C4"/>';
+ s+='<rect x="34" y="92" width="96" height="5" rx="2" fill="#8A6745"/><rect x="40" y="70" width="10" height="22" fill="#2F5BEA"/><rect x="52" y="74" width="9" height="18" fill="#C2477A"/><rect x="63" y="68" width="11" height="24" fill="#1E9E6A"/><rect x="80" y="78" width="14" height="14" rx="2" fill="#D9822B"/>';
+ /* lit */
+ s+='<g data-hot="sleep" style="cursor:pointer"><rect x="10" y="136" width="11" height="80" rx="3" fill="#7B5A3C"/><rect x="14" y="190" width="154" height="11" rx="2" fill="#8A6745"/><rect x="16" y="200" width="8" height="15" fill="#7B5A3C"/><rect x="158" y="200" width="8" height="15" fill="#7B5A3C"/><rect x="22" y="168" width="146" height="24" rx="6" fill="#ECEAF4"/><ellipse cx="48" cy="166" rx="21" ry="9" fill="#FFFFFF"/>';
+ if(pose==='sleep')s+='<circle cx="46" cy="158" r="11" fill="'+SKIN+'"/><path d="M35 156Q36 144 47 145Q57 144 57 156Q50 150 35 156Z" fill="'+HAIR+'"/><path d="M41 160q3 2.5 6 0" stroke="#2A2018" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+ s+='<rect x="62" y="'+(pose==='sleep'?158:164)+'" width="106" height="'+(pose==='sleep'?34:28)+'" rx="9" fill="#4F6FD6"/><path d="M62 176H168" stroke="#7F9BEA" stroke-width="3"/>';
+ if(pose==='sleep')s+='<text class="zz" x="66" y="132" font-size="16" font-weight="700" fill="#4B4A8C">z</text><text class="zz2" x="82" y="114" font-size="22" font-weight="700" fill="#4B4A8C">Z</text>';
+ s+='</g>';
+ /* bureau */
+ s+='<g data-hot="etudes" style="cursor:pointer"><rect x="186" y="140" width="5" height="40" fill="#5B6B7A"/><rect x="186" y="174" width="28" height="6" rx="2" fill="#5B6B7A"/><rect x="189" y="180" width="4" height="35" fill="#4A5866"/><rect x="207" y="180" width="4" height="35" fill="#4A5866"/><rect x="216" y="164" width="100" height="8" rx="2" fill="#8A6745"/><rect x="221" y="172" width="6" height="43" fill="#7B5A3C"/><rect x="305" y="172" width="6" height="43" fill="#7B5A3C"/><rect x="254" y="159" width="36" height="5" rx="1.5" fill="#C9D1D8"/><path d="M256 159L258 136H286L288 159Z" fill="#2B3A4A"/><path d="M259 156L261 139H283L285 156Z" fill="'+(study?'#8FD3FF':'#4A6176')+'"/><rect x="226" y="154" width="18" height="10" rx="1.5" fill="#C2477A"/><rect x="228" y="149" width="16" height="5" rx="1" fill="#2F5BEA"/><rect x="298" y="160" width="12" height="4" rx="1" fill="#5B6B7A"/><path d="M304 160L300 138" stroke="#5B6B7A" stroke-width="3" stroke-linecap="round"/><path d="M293 134L309 134L305 143L297 143Z" fill="#E9A23B"/>';
+ if(pose==='meal')s+='<ellipse cx="238" cy="162" rx="11" ry="2.6" fill="#FFFFFF"/><circle cx="235" cy="160" r="3" fill="#E4572E"/><circle cx="241" cy="160" r="3" fill="#7FB59B"/>';
+ s+='</g>';
+ /* armoire */
+ s+='<g data-hot="menage" style="cursor:pointer"><rect x="338" y="58" width="54" height="157" rx="3" fill="#8A6745"/>';
+ if(open)s+='<rect x="341" y="61" width="24" height="151" fill="#5C4430"/><path d="M345 70H361" stroke="#CBD3D9" stroke-width="2"/><rect x="346" y="74" width="12" height="38" rx="2" fill="#4F6FD6"/><rect x="346" y="116" width="12" height="34" rx="2" fill="#E4572E"/><rect x="346" y="154" width="12" height="40" rx="2" fill="#6F8294"/><path d="M341 61L322 70V204L341 212Z" fill="#7B5A3C"/>';
+ else s+='<rect x="341" y="61" width="24" height="151" rx="2" fill="#A47E58"/><circle cx="361" cy="140" r="2.5" fill="#EFEBE0"/>';
+ s+='<rect x="367" y="61" width="22" height="151" rx="2" fill="#A47E58"/><circle cx="371" cy="140" r="2.5" fill="#EFEBE0"/></g>';
+ /* sac de sport */
+ s+='<g data-hot="sport" style="cursor:pointer"><rect x="314" y="196" width="22" height="18" rx="6" fill="#E4572E"/><path d="M319 196Q325 187 331 196" stroke="#A33A1B" stroke-width="3" fill="none"/></g>';
+ if(pose==='sporthome')s+='<rect x="196" y="212" width="104" height="5" rx="2.5" fill="#E4572E"/>';
+ /* personnage */
+ if(pose==='desk')s+=char(200,'sit',{legH:33,arm:'desk'});
+ else if(pose==='meal')s+=char(200,'sit',{legH:33,arm:'desk'});
+ else if(pose==='armoire')s+=char(318,'stand',{arm:'up'});
+ else if(pose==='clean')s+=char(312,'stand',{broom:true});
+ else if(pose==='sporthome')s+=char(248,'sport',{});
+ else if(pose==='sitbed')s+=char(146,'sit',{legH:39,arm:'rest'});
+ s+='<rect width="400" height="260" fill="#0B1230" opacity="'+dk.toFixed(2)+'" style="pointer-events:none"/>';
+ if(study&&nt>0.2)s+='<path d="M293 143L309 143L336 214L278 214Z" fill="#FFE7A3" opacity="'+(0.28*(0.4+nt)).toFixed(2)+'" style="pointer-events:none"/>';
+ return s;
+}
+
+/* ---------- la rue ---------- */
+function streetSVG(sc,m,S){
+ const hh=m/60,c=sky(hh),nt=night(hh),bd=body(hh),p=sc.p;
+ const sx=30+340*bd.p,sy=96-Math.sin(Math.PI*bd.p)*62;
+ const sm=bd.sun?'<circle cx="'+sx+'" cy="'+sy+'" r="12" fill="#FFD66B"/>':'<circle cx="'+sx+'" cy="'+sy+'" r="10" fill="#F4F1E1"/><circle cx="'+(sx+4)+'" cy="'+(sy-2)+'" r="9" fill="'+c[0]+'" opacity=".85"/>';
+ const stars=[[40,30],[90,52],[140,24],[200,40],[260,22],[310,50],[360,30],[380,70],[20,80],[170,70]].map(q=>'<circle cx="'+q[0]+'" cy="'+q[1]+'" r="1.5" fill="#fff" opacity="'+(nt*0.9).toFixed(2)+'"/>').join('');
+ const lit=nt>0.5;
+ let s='<defs><linearGradient id="skS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+c[0]+'"/><stop offset="1" stop-color="'+c[1]+'"/></linearGradient></defs>';
+ s+='<rect width="400" height="200" fill="url(#skS)"/>'+stars+sm;
+ s+='<g fill="'+(nt>0.5?'#27345C':'#9DB1C6')+'"><rect x="96" y="122" width="26" height="76"/><rect x="132" y="106" width="22" height="92"/><rect x="160" y="128" width="34" height="70"/></g>';
+ s+='<rect y="196" width="400" height="14" fill="#C7CDD2"/><rect y="210" width="400" height="50" fill="#6F7C88"/><path d="M0 236H400" stroke="#E9ECEF" stroke-width="3" stroke-dasharray="22 16"/>';
+ s+='<g><rect x="14" y="118" width="74" height="78" fill="#DDBB92"/><path d="M8 122L51 84L94 122Z" fill="#8B4A3C"/><rect x="45" y="154" width="18" height="42" rx="2" fill="#6B4A33"/><rect x="22" y="134" width="18" height="16" fill="'+(lit?'#F7DE8C':'#CFE6F5')+'"/><rect x="68" y="134" width="14" height="16" fill="'+(lit?'#F7DE8C':'#CFE6F5')+'"/></g>';
+ s+='<rect x="117" y="168" width="6" height="28" fill="#7A5B3E"/><circle cx="120" cy="152" r="22" fill="#4E9B6B"/><rect x="177" y="170" width="6" height="26" fill="#7A5B3E"/><circle cx="180" cy="156" r="18" fill="#58A675"/>';
+ s+='<g data-hot="travail" style="cursor:pointer"><rect x="205" y="62" width="188" height="134" rx="4" fill="#556677"/><rect x="221" y="74" width="152" height="24" rx="5" fill="#2F5BEA"/><text x="297" y="91" text-anchor="middle" font-family="Bricolage Grotesque,system-ui,sans-serif" font-weight="700" font-size="15" fill="#FFFFFF">'+esc(S.workName||'Travail')+'</text><rect x="221" y="106" width="118" height="90" fill="'+(lit?'#F7DE8C':'#CBE7F3')+'" opacity=".95"/><rect x="232" y="176" width="46" height="6" fill="#7A8794"/><path d="M270 176L277 148" stroke="#7A8794" stroke-width="3"/><rect x="346" y="134" width="32" height="62" rx="2" fill="#3B4A58"/><rect x="350" y="138" width="24" height="54" fill="#CBE7F3" opacity=".8"/>';
+ if(sc.sc==='work')s+=char(294,'stand',{shirt:'#3C4650',y:196});
+ s+='<rect x="262" y="162" width="64" height="34" rx="3" fill="#E3E6EA" stroke="#BCC4CB"/></g>';
+ if(sc.sc==='walkTo')s+=char(54+306*p,'walk',{shirt:'#2F5BEA',y:206});
+ else if(sc.sc==='walkBack')s+=char(360-306*p,'walk',{shirt:'#2F5BEA',y:206,flip:true});
+ else if(sc.sc==='out')s+=char(150,'stand',{shirt:'#2F5BEA',y:206});
+ else if(sc.sc==='run'){const u=(p*3)%2;const left=u>=1;const x=left?20+360*(2-u):20+360*u;s+=char(x,'run',{shirt:'#E4572E',y:206,flip:left});}
+ s+='<rect x="166" y="124" width="4" height="72" fill="#3D4A56"/><circle cx="168" cy="122" r="5" fill="'+(lit?'#FFE08A':'#9AA7B2')+'"/>';
+ s+='<rect width="400" height="260" fill="#0B1230" opacity="'+(nt*0.3).toFixed(2)+'" style="pointer-events:none"/>';
+ if(lit)s+='<circle cx="168" cy="122" r="24" fill="#FFE08A" opacity=".25" style="pointer-events:none"/>';
+ return s;
+}
+function sceneInfo(plan,d,m){
+ const b=blockAt(plan,d,m);
+ const sc=b?b.scene:'bed';
+ const p=b?Math.min(1,Math.max(0,(m-b.s)/Math.max(1,b.e-b.s))):0;
+ const street=['work','walkTo','walkBack','run','out'].indexOf(sc)>=0;
+ const pose=({sleep:'sleep',armoire:'armoire',desk:'desk',meal:'meal',clean:'clean',sporthome:'sporthome',bed:'sitbed'})[sc]||null;
+ return {b:b,sc:sc,p:p,street:street,pose:pose};
+}
+
+/* ---------- données ---------- */
+function load(){
+ let p=null;
+ try{p=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){p=null;}
+ p=p||{};
+ const S=mergeS(p.S||{});
+ if(!p.v||p.v<2){S.quota=Object.assign({},DEFAULTS.quota);S.prep=DEFAULTS.prep;S.commute=DEFAULTS.commute;p.roadmap=null;}
+ if(p.v!==4)p.override=null;
+ const roadmap=p.roadmap||{};
+ Object.keys(DEFAULT_ROAD).forEach(k=>{if(!Array.isArray(roadmap[k]))roadmap[k]=DEFAULT_ROAD[k].map(t=>({t:t,ok:false}));});
+ let cards=Array.isArray(p.cards)?p.cards:[];
+ const seeded=!!p.cardsSeeded;
+ if(!seeded)cards=cards.concat(ARABIC.map((l,i)=>({id:'ar'+i,deck:'arabe',f:l[0],b:l[1]+' : '+l[2],box:0,due:'0000-00-00'})));
+ return {v:4,S:S,done:p.done||{},override:p.override||null,weekKey:p.weekKey||'',weights:p.weights||[],incomes:p.incomes||[],roadmap:roadmap,hist:p.hist||{},events:Array.isArray(p.events)?p.events:[],shiftOv:p.shiftOv||{week:'',map:{}},capOv:p.capOv||{week:'',map:{}},todos:Array.isArray(p.todos)?p.todos:[],cards:cards,cardsSeeded:true,habits:Array.isArray(p.habits)?p.habits:[],habitLog:p.habitLog||{},reviews:p.reviews||{},theme:p.theme||'auto',weeklyStats:p.weeklyStats||{}};
+}
+function beep(){
+ try{
+  const A=window.AudioContext||window.webkitAudioContext;if(!A)return;
+  const a=new A(),o=a.createOscillator(),g=a.createGain();
+  o.frequency.value=660;g.gain.value=0.08;o.connect(g);g.connect(a.destination);o.start();
+  setTimeout(()=>{o.stop();a.close();},350);
+ }catch(e){}
+}
+function nextTask(plan,pos,done){
+ const all=[];
+ plan.days.forEach(dd=>dd.blocks.forEach(b=>{if((b.type==='task'||b.type==='todo')&&!b.missed&&!done[blockKey(b)])all.push(b);}));
+ const cur=all.find(b=>b.d===pos.d&&b.s<=pos.m&&pos.m<b.e);
+ if(cur)return {b:cur,now:true};
+ const nx=all.find(b=>b.d>pos.d||(b.d===pos.d&&b.s>=pos.m));
+ return nx?{b:nx,now:false}:null;
+}
+
+/* ---------- petits composants ---------- */
+function Num(props){
+ const [v,setV]=useState(String(props.value));
+ useEffect(()=>{setV(String(props.value));},[props.value]);
+ const commit=()=>{
+  const n=parseFloat(String(v).replace(',','.'));
+  if(isNaN(n)){setV(String(props.value));return;}
+  props.onCommit(Math.min(props.max===undefined?1e9:props.max,Math.max(props.min===undefined?0:props.min,n)));
+ };
+ return h('label',{className:'fld'},h('span',null,props.label),
+  h('span',{className:'fld-in'},h('input',{type:'text',inputMode:'decimal',value:v,onChange:e=>setV(e.target.value),onBlur:commit,onKeyDown:e=>{if(e.key==='Enter')e.target.blur();}}),props.suffix?h('em',null,props.suffix):null));
+}
+function Bar(props){
+ const pl=props.total>0?Math.min(100,props.planned/props.total*100):0,dn=props.total>0?Math.min(100,props.done/props.total*100):0;
+ return h('div',{className:'bar',role:'img','aria-label':'Progression'},h('i',{style:{width:pl+'%',background:props.color,opacity:.3}}),h('i',{style:{width:dn+'%',background:props.color}}));
+}
+
+function Txt(props){
+ const [v,setV]=useState(props.value);
+ useEffect(()=>{setV(props.value);},[props.value]);
+ const commit=()=>{if(v!==props.value)props.onCommit(v);};
+ const inp=props.multi
+  ?h('textarea',{value:v,rows:3,placeholder:props.placeholder,onChange:e=>setV(e.target.value),onBlur:commit})
+  :h('input',{type:'text',value:v,placeholder:props.placeholder,onChange:e=>setV(e.target.value),onBlur:commit,onKeyDown:e=>{if(e.key==='Enter')e.target.blur();}});
+ return h('label',{className:'fld col'},h('span',null,props.label),inp);
+}
+function ConfirmBtn(props){
+ const [c,setC]=useState(false);
+ return h('button',{className:'btn danger sm',onClick:()=>{if(!c){setC(true);return;}props.onConfirm();setC(false);},onBlur:()=>setC(false)},c?props.confirm:props.label);
+}
+function daysTo(iso,from){
+ if(!iso)return null;
+ const a=Date.UTC(+iso.slice(0,4),+iso.slice(5,7)-1,+iso.slice(8,10)),b=Date.UTC(+from.slice(0,4),+from.slice(5,7)-1,+from.slice(8,10));
+ return Math.round((a-b)/86400000);
+}
+function effS(S0,so,co,week){
+ const m1=so&&so.week===week?so.map:{},m2=co&&co.week===week?co.map:{};
+ return Object.assign({},S0,{shifts:S0.shifts.map((x,d)=>Object.prototype.hasOwnProperty.call(m1,d)?m1[d]:x),capMul:m2});
+}
+
+/* ---------- habitudes et bilan ---------- */
+const HAB_SUG=['Boire 2 L d’eau','Marcher 20 minutes','Lire 10 pages','Ranger mon bureau'];
+function HabitsCard(props){
+ const C=props.C,st=C.store,log=st.habitLog||{},today=C.now.iso,hs=st.habits||[];
+ const [txt,setTxt]=useState('');
+ const todayIds=log[today]||[];
+ const streakOf=id=>{let n=0,dt=today;if((log[dt]||[]).indexOf(id)<0)dt=addDays(dt,-1);while((log[dt]||[]).indexOf(id)>=0&&n<400){n++;dt=addDays(dt,-1);}return n;};
+ const toggle=id=>C.upd(s=>{const l=Object.assign({},s.habitLog);const cur=(l[today]||[]).slice();const i=cur.indexOf(id);if(i>=0)cur.splice(i,1);else cur.push(id);l[today]=cur;return {habitLog:l};});
+ const add=n=>{const t=String(n).trim();if(!t)return;C.upd(s=>({habits:s.habits.concat([{id:'h'+Date.now().toString(36)+Math.floor(Math.random()*99),nom:t}])}));setTxt('');};
+ const del=id=>C.upd(s=>({habits:s.habits.filter(x=>x.id!==id)}));
+ return h('div',{className:'card'},
+  h('h3',null,'Habitudes du jour'),
+  hs.length?h('ul',{className:'plain'},hs.map(x=>{const on=todayIds.indexOf(x.id)>=0,n=streakOf(x.id);return h('li',{key:x.id},
+   h('label',{className:'cb'},h('input',{type:'checkbox',checked:on,onChange:()=>toggle(x.id)}),h('span',null,x.nom)),
+   h('span',{className:'muted'},n>0?n+' jour'+(n>1?'s':'')+' de suite':'',' ',h('button',{className:'ghost',onClick:()=>del(x.id),'aria-label':'Retirer '+x.nom},'Retirer')));}))
+  :h('p',{className:'muted'},'De petites habitudes à cocher chaque jour. Choisis-en une ou écris la tienne.'),
+  h('div',{className:'chips'},HAB_SUG.filter(x=>!hs.some(y=>y.nom===x)).map(x=>h('button',{key:x,className:'chip',onClick:()=>add(x)},'+ '+x))),
+  h('div',{className:'add'},h('input',{type:'text',placeholder:'Nouvelle habitude',value:txt,onChange:e=>setTxt(e.target.value),onKeyDown:e=>{if(e.key==='Enter')add(txt);}}),h('button',{className:'btn sm',onClick:()=>add(txt)},'Ajouter')));
+}
+const BLK=['Fatigue','Téléphone','Pas envie','Imprévu','Trop difficile','Distrait','Rien'];
+function BilanCard(props){
+ const C=props.C,today=C.now.iso,r=(C.store.reviews||{})[today]||null;
+ const [f,setF]=useState(()=>r||{energy:3,mood:3,block:[],note:''});
+ const set=p=>setF(x=>Object.assign({},x,p));
+ const scale=(key,label)=>h('div',{className:'fld col'},h('span',null,label),h('div',{className:'seg'},[1,2,3,4,5].map(n=>h('button',{key:n,className:f[key]===n?'on':'','aria-pressed':f[key]===n,onClick:()=>set({[key]:n})},String(n)))));
+ const save=()=>{C.upd(s=>({reviews:Object.assign({},s.reviews,{[today]:Object.assign({},f,{date:today})})}));C.toast('Bilan enregistré.');};
+ return h('details',{className:'card bilan',open:C.now.min>=1080?true:undefined},
+  h('summary',null,r?'Bilan du soir (enregistré)':'Bilan du soir'),
+  h('p',{className:'muted'},'Une minute pour comprendre ta journée. Ça aide à voir ce qui te freine.'),
+  scale('energy','Ton énergie (1 = à plat, 5 = au top)'),
+  scale('mood','Ton humeur'),
+  h('div',{className:'fld col'},h('span',null,'Qu’est-ce qui t’a freiné ?'),h('div',{className:'chips'},BLK.map(x=>{const on=f.block.indexOf(x)>=0;return h('button',{key:x,className:'chip'+(on?' on':''),'aria-pressed':on,onClick:()=>set({block:on?f.block.filter(y=>y!==x):f.block.concat([x])})},x);}))),
+  h('label',{className:'fld col'},h('span',null,'Une note pour demain'),h('textarea',{rows:2,value:f.note,onChange:e=>set({note:e.target.value})})),
+  h('div',{className:'btns'},h('button',{className:'btn',onClick:save},'Enregistrer le bilan')));
+}
+
+/* ---------- onglet Jour ---------- */
+/* ---------- onglet Jour ---------- */
+function SceneView(props){
+ const C=props.C,pos=C.pos,sc=sceneInfo(C.plan,pos.d,pos.m);
+ const room=roomSVG(sc,pos.m),street=streetSVG(sc,pos.m,C.S);
+ const onClick=ev=>{const t=ev.target.closest&&ev.target.closest('[data-hot]');if(t)C.setFocus(t.getAttribute('data-hot'));};
+ const alt=sc.b?'Scène : '+sc.b.label:'Scène : chambre';
+ return h('div',{className:'scene',onClick:onClick},
+  h('svg',{className:sc.street?'off':'on',viewBox:'0 0 400 260',role:'img','aria-label':alt,dangerouslySetInnerHTML:{__html:room}}),
+  h('svg',{className:sc.street?'on':'off',viewBox:'0 0 400 260','aria-hidden':'true',dangerouslySetInnerHTML:{__html:street}}),
+  h('div',{className:'now-chip'},h('strong',null,DAYS[pos.d]+', '+fmt(pos.m)),h('span',null,sc.b?sc.b.label:'Rien de prévu')),
+  h('div',{className:'hint'},'Touche le lit, le bureau, l’armoire ou le sac'));
+}
+function FocusPanel(props){
+ const C=props.C,k=C.focus,pos=C.pos,S=C.S;
+ if(!k)return null;
+ const day=C.plan.days[pos.d];
+ let title='',body=null;
+ const blocksOf=f=>day.blocks.filter(f);
+ if(k==='sleep'){
+  const prevBed=C.plan.days[(pos.d+6)%7].bed,wake=day.wake,tot=(1440-prevBed)+wake;
+  title='Sommeil';
+  body=h('div',null,h('p',null,'Nuit précédente : coucher à '+fmt(prevBed)+', lever à '+fmt(wake)+' ('+durL(tot)+').'),h('p',null,'Ce soir : coucher à '+fmt(day.bed)+'.'),h('p',{className:'muted'},'L’appli cale ton coucher sur ton réveil du lendemain pour viser '+S.sleepH+' h de sommeil.'));
+ }else if(k==='menage'){
+  const b=blocksOf(x=>x.mod==='menage'&&!x.missed)[0];
+  title='Ménage';
+  body=h('div',null,h('p',null,'Zone du jour : '+ZONES[pos.d]+'.'),h('p',null,b?'Créneau : '+fmt(b.s)+'–'+fmt(b.e)+(C.done[blockKey(b)]?' (fait)':'')+'.':'Pas de créneau libre aujourd’hui.'),h('p',{className:'muted'},'Minuteur de 30 minutes, musique, et tu t’arrêtes quand il sonne.'));
+ }else if(k==='etudes'){
+  const bs=blocksOf(x=>x.type==='task'&&!x.missed&&MOD[x.mod]&&STUDY.some(m=>m.id===x.mod));
+  title='Études et revenus du jour';
+  body=h('div',null,bs.length?h('ul',{className:'plain'},bs.map((b,i)=>h('li',{key:i},fmt(b.s)+'–'+fmt(b.e)+' : '+MOD[b.mod].nom+(C.done[blockKey(b)]?' (fait)':'')))):h('p',null,'Rien de prévu aujourd’hui.'),h('p',{className:'muted'},'Total prévu : '+durL(bs.reduce((a,b)=>a+b.e-b.s,0))+'.'));
+ }else if(k==='sport'){
+  const b=blocksOf(x=>x.mod==='sport'&&!x.missed)[0];
+  title='Sport';
+  body=h('div',null,h('p',null,b?'Séance : '+fmt(b.s)+'–'+fmt(b.e)+(C.done[blockKey(b)]?' (faite)':'')+'.':'Jour de repos : pas de séance prévue.'),h('p',null,'Séance douce : 5 min d’échauffement, 20 min de cardio léger (marche rapide, vélo) ou jambes et gainage, 5 min de mobilité.'),h('p',{className:'warn'},'Épaule instable : pas de mouvements au-dessus de la tête ni de charges lourdes pour l’instant. Arrête si tu as une douleur ou une sensation de déboîtement.'));
+ }else if(k==='travail'){
+  const sh=S.shifts[pos.d];
+  title=S.workName||'Travail';
+  body=h('p',null,sh?'Shift de '+fmt(sh[0])+' à '+fmt(sh[1])+' ('+durL(sh[1]-sh[0])+'). Départ de la maison à '+fmt(sh[0]-S.commute)+'.':'Pas de shift ce jour-là.');
+ }
+ return h('div',{className:'card focus'},h('div',{className:'row'},h('h3',null,title),h('button',{className:'ghost',onClick:()=>C.setFocus(null)},'Fermer')),body);
+}
+function NextAction(props){
+ const C=props.C,tm=C.tm,S=C.S;
+ const nt=nextTask(C.plan,C.pos,C.done);
+ let inner;
+ if(tm.mode){
+  const mm=pad(Math.floor(tm.left/60))+':'+pad(tm.left%60);
+  inner=h('div',null,
+   h('p',{className:'k'},tm.mode==='work'?'En cours : '+tm.label:'Pause, respire'),
+   h('div',{className:'timer'},mm),
+   h('div',{className:'btns'},
+    h('button',{className:'btn',onClick:()=>C.setTm(t=>Object.assign({},t,{paused:!t.paused}))},tm.paused?'Reprendre':'Mettre en pause'),
+    h('button',{className:'btn alt',onClick:()=>C.setTm({mode:null})},'Arrêter'),
+    tm.mode==='work'&&nt&&nt.now?h('button',{className:'btn alt',onClick:()=>{C.toggleDone(nt.b);C.setTm({mode:null});}},'C’est fait'):null));
+ }else if(nt){
+  const b=nt.b,m=b.type==='todo'?{nom:b.label,note:''}:MOD[b.mod];
+  const mins=Math.max(5,Math.min(S.pomoWork,b.e-b.s));
+  inner=h('div',null,
+   h('p',{className:'k'},(nt.now?'Maintenant : ':'À suivre : ')+m.nom),
+   h('p',{className:'big'},DS[b.d]+' '+fmt(b.s)+'–'+fmt(b.e)),
+   m.note?h('p',{className:'muted'},m.note):null,
+   tm.msg?h('p',{className:'ok'},tm.msg):null,
+   h('div',{className:'btns'},
+    h('button',{className:'btn',onClick:()=>C.startTimer(mins,m.nom,false)},'Commencer ('+mins+' min)'),
+    h('button',{className:'btn alt',onClick:()=>C.startTimer(5,m.nom,true)},'Juste 5 minutes'),
+    h('button',{className:'btn alt',onClick:()=>C.toggleDone(b)},'C’est fait')));
+ }else{
+  inner=h('p',null,'Tout est fait pour cette semaine. Profite, ou avance sur un module depuis l’onglet Modules.');
+ }
+ return h('div',{className:'card next'},h('h3',null,'Prochaine action'),inner);
+}
+function actionsFor(C,b){
+ const a=[];
+ const evOf=()=>C.events.find(x=>x.id===b.evId);
+ if(b.type==='task'&&!b.missed){
+  if(b.pin){
+   const ev=evOf();
+   if(ev){a.push({t:'Modifier',run:()=>C.openEditor(Object.assign({},ev))});a.push({t:'Supprimer',run:()=>C.deleteEvent(ev.id)});}
+  }else{
+   a.push({t:'Changer l’horaire',run:()=>C.openEditor({kind:'seance',mod:b.mod,d:b.d,s:b.s,e:b.e,rec:'week'})});
+   a.push({t:'Libérer ce créneau',run:()=>C.saveEvent({kind:'libre',title:'Créneau libéré',d:b.d,s:b.s,e:b.e,rec:'week',loc:'maison',tb:0,ta:0,week:C.now.week})});
+  }
+ }else if(b.type==='todo'&&!b.missed){
+  a.push({t:'Ouvrir mes tâches',run:()=>C.setTab('taches')});
+ }else if(b.type==='event'){
+  const ev=evOf();
+  if(ev){a.push({t:'Modifier',run:()=>C.openEditor(Object.assign({},ev))});a.push({t:'Supprimer',run:()=>C.deleteEvent(ev.id)});}
+ }else if(b.type==='libre'){
+  a.push({t:'Ajouter un rendez-vous ici',run:()=>C.openEditor({kind:'rdv',d:b.d,s:b.s,e:Math.min(b.e,b.s+60)})});
+ }else if(b.type==='work'){
+  a.push({t:'Changer mes horaires cette semaine',run:()=>C.setTab('evenements')});
+ }
+ return a;
+}
+function Timeline(props){
+ const C=props.C,day=C.plan.days[C.pos.d];
+ const [open,setOpen]=useState(null);
+ return h('ul',{className:'tl'},day.blocks.map((b,i)=>{
+  const bk=blockKey(b),k=bk+'-'+i,isNow=C.pos.m>=b.s&&C.pos.m<b.e,dn=!!C.done[bk],task=(b.type==='task'||b.type==='todo')&&!b.missed;
+  const acts=actionsFor(C,b),isOpen=open===k;
+  const lab=[b.label,b.type==='task'&&b.mod==='menage'?h('small',{key:'z'},' : '+ZONES[b.d]):null];
+  return h('li',{key:k,className:'tl-i'+(isNow?' now':'')+(b.missed?' missed':'')+(dn?' done':''),style:{borderLeftColor:colorOf(b)}},
+   h('span',{className:'tl-t'},fmt(b.s)+'–'+fmt(b.e)),
+   acts.length?h('button',{className:'tl-btn','aria-expanded':isOpen,onClick:()=>setOpen(isOpen?null:k)},lab):h('span',{className:'tl-l'},lab),
+   task?h('button',{className:'chk'+(dn?' on':''),onClick:()=>C.toggleDone(b),'aria-pressed':dn},dn?'Fait':'À faire'):b.missed?h('span',{className:'tag'},'Manqué'):h('span',{className:'dur'},durL(b.e-b.s)),
+   isOpen?h('div',{className:'tl-act'},acts.map((a,j)=>h('button',{key:j,className:'btn alt sm',onClick:()=>{a.run();setOpen(null);}},a.t))):null);
+ }));
+}
+function DayTab(props){
+ const C=props.C,pos=C.pos,S=C.S;
+ const [imp,setImp]=useState(false);
+ const [qt,setQt]=useState('');
+ const dayB=C.plan.days[pos.d].blocks;
+ const top3=dayB.filter(b=>(b.type==='task'||b.type==='todo')&&!b.missed&&!C.done[blockKey(b)]).slice(0,3);
+ const mulNow=(S.capMul&&S.capMul[pos.d]!==undefined)?S.capMul[pos.d]:1;
+ const nameOf=b=>b.type==='todo'?b.label:MOD[b.mod].nom;
+ const addQuick=()=>{const t=qt.trim();if(!t)return;C.saveTodo({title:t,dur:30,prio:2,due:pos.d});setQt('');};
+ return h('div',{className:'grid day'},
+  h('div',{className:'col'},
+   S.why?h('blockquote',{className:'why'},S.why):null,
+   SceneView({C:C}),
+   h('div',{className:'ctrl'},
+    h('button',{className:'btn alt sm',onClick:()=>C.setSel({d:(pos.d+6)%7,m:pos.m})},'Veille'),
+    h('input',{type:'range',min:0,max:10079,step:5,value:pos.d*1440+pos.m,'aria-label':'Choisir un moment de la semaine',onChange:e=>{const v=+e.target.value;C.setSel({d:Math.floor(v/1440),m:v%1440});}}),
+    h('button',{className:'btn alt sm',onClick:()=>C.setSel({d:(pos.d+1)%7,m:pos.m})},'Lendemain')),
+   h('div',{className:'row small'},h('span',{className:'muted'},C.sel?'Tu regardes : '+DAYS[pos.d]+' '+fmt(pos.m):'En direct'),C.sel?h('button',{className:'ghost',onClick:()=>C.setSel(null)},'Revenir à maintenant'):null),
+   h(FocusPanel,{C:C}),
+   h(NextAction,{C:C}),
+   h(HabitsCard,{C:C}),
+   h(BilanCard,{C:C})),
+  h('div',{className:'col'},
+   h('div',{className:'card'},
+    h('div',{className:'row'},h('h2',null,DAYS[pos.d]),h('span',{className:'muted'},S.shifts[pos.d]?'Shift '+fmt(S.shifts[pos.d][0])+'–'+fmt(S.shifts[pos.d][1]):'Pas de shift')),
+    h('label',{className:'fld'},h('span',null,'Charge de ce jour'),h('select',{value:String(mulNow),disabled:pos.d<C.now.day,'aria-label':'Charge de travail du jour',onChange:e=>C.setCapMul(pos.d,parseFloat(e.target.value))},[[0,'Repos : pas d’étude'],[0.6,'Léger'],[1,'Normal'],[1.4,'Intense']].map(o=>h('option',{key:o[0],value:String(o[0])},o[1])))),
+    top3.length?h('div',{className:'top3'},h('p',{className:'k'},'Ton top 3 restant'),h('ol',null,top3.map((b,i)=>h('li',{key:i},h('span',{className:'dot',style:{background:colorOf(b)}}),nameOf(b)+' à '+fmt(b.s)))))
+    :h('p',{className:'muted'},'Plus rien à faire sur cette journée.'),
+    h(Timeline,{C:C}),
+    h('div',{className:'add'},h('input',{type:'text',placeholder:'Ajout rapide d’une tâche de 30 min',value:qt,onChange:e=>setQt(e.target.value),onKeyDown:e=>{if(e.key==='Enter')addQuick();}}),h('button',{className:'btn sm',onClick:addQuick},'Ajouter')),
+    h('div',{className:'btns pad'},
+     h('button',{className:'btn alt',onClick:C.replanNow},'Replanifier ma journée'),
+     h('button',{className:'btn alt',onClick:C.replanMissed},'Journée ratée : reporter'),
+     h('button',{className:'btn alt',onClick:()=>C.openEditor({})},'Ajouter un rendez-vous'),
+     h('button',{className:'btn alt','aria-expanded':imp,onClick:()=>setImp(v=>!v)},'Imprévu')),
+    imp?h('div',{className:'card inner'},h('p',{className:'k'},'Combien de temps tu perds à partir de maintenant ?'),h('div',{className:'btns'},[[30,'30 min'],[60,'1 h'],[120,'2 h'],[0,'Le reste de la journée']].map(x=>h('button',{key:x[0],className:'btn sm',onClick:()=>{C.addUnforeseen(x[0]);setImp(false);}},x[1])).concat([h('button',{key:'h',className:'btn sm alt',onClick:()=>{C.openEditor({kind:'imprevu',loc:'maison'});setImp(false);}},'Heure précise…')]))):null)));
+}
+
+/* ---------- onglet Tâches ---------- */
+const PRIO=[[3,'Haute'],[2,'Normale'],[1,'Basse']];
+function TodosTab(props){
+ const C=props.C;
+ const blank=()=>({title:'',dur:30,prio:2,due:null});
+ const [f,setF]=useState(blank());
+ const [err,setErr]=useState('');
+ const set=p=>setF(x=>Object.assign({},x,p));
+ const todos=C.store.todos;
+ const placed={};C.plan.days.forEach(dd=>dd.blocks.forEach(b=>{if(b.type==='todo'&&!b.missed)placed[b.tid]=b;}));
+ const open=todos.filter(t=>!t.done).slice().sort((a,b)=>{const da=a.due==null?9:a.due,db=b.due==null?9:b.due;return da-db||b.prio-a.prio;});
+ const done=todos.filter(t=>t.done);
+ const save=()=>{
+  if(!String(f.title).trim()){setErr('Écris la tâche, par exemple « Appeler la banque ».');return;}
+  C.saveTodo(Object.assign({},f,{title:String(f.title).trim()}));setF(blank());setErr('');
+ };
+ return h('div',{className:'grid mods'},
+  h('div',{className:'card wide'},
+   h('h2',null,f.id?'Modifier la tâche':'Ajouter une tâche'),
+   h('p',{className:'muted'},'Dis juste ce qu’il faut faire, combien de temps ça prend et pour quand. L’agenda trouve un créneau libre tout seul.'),
+   h('div',{className:'form'},
+    h('label',{className:'fld col'},h('span',null,'Tâche'),h('input',{type:'text',value:f.title,placeholder:'Appeler la banque, repasser, démarche…',onChange:e=>set({title:e.target.value}),onKeyDown:e=>{if(e.key==='Enter')save();}})),
+    h(Num,{label:'Durée',value:f.dur,suffix:'min',min:5,max:240,onCommit:v=>set({dur:Math.round(v)})}),
+    h(Sel,{label:'Priorité',value:f.prio,options:PRIO,onChange:v=>set({prio:+v})}),
+    h(Sel,{label:'Pour quand ?',value:f.due==null?'':f.due,options:[['','Sans date limite']].concat(DAYS.map((n,i)=>[i,n])),onChange:v=>set({due:v===''?null:+v})})),
+   err?h('p',{className:'warn'},err):null,
+   h('div',{className:'btns'},h('button',{className:'btn',onClick:save},f.id?'Enregistrer':'Ajouter'),f.id?h('button',{className:'btn alt',onClick:()=>{setF(blank());setErr('');}},'Annuler'):null)),
+  h('div',{className:'card wide'},
+   h('h3',null,'À faire ('+open.length+')'),
+   open.length?h('ul',{className:'plain ev'},open.map(t=>{const b=placed[t.id];return h('li',{key:t.id},
+    h('span',null,h('strong',null,t.title),' ',h('span',{className:'muted'},durL(t.dur)+', priorité '+(PRIO.find(p=>p[0]===t.prio)||PRIO[1])[1].toLowerCase()+(t.due!=null?', pour '+DAYS[t.due].toLowerCase():'')),h('br'),b?h('span',{className:'ok'},'Placée '+DAYS[b.d].toLowerCase()+' de '+fmt(b.s)+' à '+fmt(b.e)):h('span',{className:'warn'},'Pas de créneau libre assez long pour l’instant')),
+    h('span',{className:'btns tight'},h('button',{className:'ghost',onClick:()=>C.setTodoDone(t.id,true)},'Fait'),h('button',{className:'ghost',onClick:()=>setF(Object.assign({},t))},'Modifier'),h('button',{className:'ghost',onClick:()=>C.deleteTodo(t.id)},'Supprimer')));}))
+   :h('p',{className:'muted'},'Rien en attente. Ajoute une tâche ci-dessus ou depuis l’onglet Jour.'),
+   done.length?h('details',{className:'road'},h('summary',null,'Faites ('+done.length+')'),h('ul',{className:'plain'},done.map(t=>h('li',{key:t.id},h('span',null,t.title),h('button',{className:'ghost',onClick:()=>C.deleteTodo(t.id)},'Retirer'))))):null));
+}
+
+/* ---------- onglet Réviser ---------- */
+function ReviseTab(props){
+ const C=props.C,cards=C.store.cards,today=C.now.iso,deck=C.reviseDeck;
+ const [queue,setQueue]=useState(null);
+ const [shown,setShown]=useState(false);
+ const [fr,setFr]=useState(''),[bk,setBk]=useState(''),[bulk,setBulk]=useState('');
+ const mine=cards.filter(c=>c.deck===deck),due=mine.filter(c=>c.due<=today);
+ const q=queue?queue.filter(id=>cards.some(c=>c.id===id)):null;
+ const cur=q&&q.length?cards.find(c=>c.id===q[0]):null;
+ const start=()=>{setQueue(due.slice().sort((a,b)=>a.box-b.box).map(c=>c.id));setShown(false);};
+ const answer=ok=>{
+  if(!cur)return;
+  C.upd(s=>({cards:s.cards.map(c=>c.id===cur.id?Object.assign({},c,ok?{box:Math.min(6,c.box+1),due:addDays(today,INTERVALS[Math.min(6,c.box+1)])}:{box:0,due:today}):c)}));
+  setQueue(old=>{const r=old.filter(id=>id!==cur.id);return ok?r:r.concat([cur.id]);});
+  setShown(false);
+ };
+ const newId=()=>'k'+Date.now().toString(36)+Math.floor(Math.random()*9999);
+ const addCard=()=>{if(!fr.trim()||!bk.trim()){C.toast('Remplis les deux faces de la carte.');return;}C.upd(s=>({cards:s.cards.concat([{id:newId(),deck:deck,f:fr.trim(),b:bk.trim(),box:0,due:'0000-00-00'}])}));setFr('');setBk('');};
+ const addBulk=()=>{
+  const out=[];
+  bulk.split('\n').forEach(l=>{const i=l.indexOf(';');if(i>0&&l.slice(i+1).trim())out.push({id:newId(),deck:deck,f:l.slice(0,i).trim(),b:l.slice(i+1).trim(),box:0,due:'0000-00-00'});});
+  if(!out.length){C.toast('Une carte par ligne, au format : question ; réponse');return;}
+  C.upd(s=>({cards:s.cards.concat(out)}));setBulk('');C.toast(out.length+' carte'+(out.length>1?'s':'')+' ajoutée'+(out.length>1?'s':'')+'.');
+ };
+ const isAr=t=>/[\u0600-\u06FF]/.test(t);
+ const mastered=mine.filter(c=>c.box>=4).length;
+ return h('div',{className:'grid mods'},
+  h('div',{className:'card wide'},
+   h('h2',null,'Cartes de révision'),
+   h('p',{className:'muted'},'Une carte réussie revient plus tard (1, 2, 4, 8 jours…). Une carte ratée revient tout de suite. C’est la méthode la plus efficace pour retenir.'),
+   h('div',{className:'chips'},STUDY.map(m=>{const n=cards.filter(c=>c.deck===m.id&&c.due<=today).length;return h('button',{key:m.id,className:'chip'+(deck===m.id?' on':''),'aria-pressed':deck===m.id,onClick:()=>{C.setReviseDeck(m.id);setQueue(null);}},m.nom+(n?' ('+n+')':''));}))),
+  h('div',{className:'card flash'},
+   h('p',{className:'k'},STUDY.some(m=>m.id===deck)?MOD[deck].nom:'Paquet'),
+   h('p',{className:'muted'},mine.length+' carte'+(mine.length>1?'s':'')+', '+due.length+' à réviser aujourd’hui, '+mastered+' bien sues.'),
+   q===null?h('div',null,due.length?h('button',{className:'btn',onClick:start},'Réviser ('+due.length+')'):h('p',{className:'ok'},mine.length?'Rien à réviser aujourd’hui. Bravo.':'Ajoute ta première carte.')):
+   cur?h('div',null,
+    h('div',{className:'fcard'},h('div',Object.assign({className:'ff'+(isAr(cur.f)?' arab':'')},isAr(cur.f)?{dir:'rtl',lang:'ar'}:{}),cur.f),shown?h('div',{className:'fb'},cur.b):null),
+    shown?h('div',{className:'btns'},h('button',{className:'btn',onClick:()=>answer(true)},'Je savais'),h('button',{className:'btn alt',onClick:()=>answer(false)},'Pas encore')):h('div',{className:'btns'},h('button',{className:'btn',onClick:()=>setShown(true)},'Voir la réponse')),
+    h('p',{className:'muted'},q.length+' restante'+(q.length>1?'s':''))):
+   h('div',null,h('p',{className:'ok'},'Session terminée.'),h('button',{className:'btn alt',onClick:()=>setQueue(null)},'Fermer'))),
+  h('div',{className:'card'},
+   h('h3',null,'Ajouter une carte'),
+   h('div',{className:'form'},h('label',{className:'fld col'},h('span',null,'Face avant'),h('input',{type:'text',value:fr,onChange:e=>setFr(e.target.value)})),h('label',{className:'fld col'},h('span',null,'Réponse'),h('input',{type:'text',value:bk,onChange:e=>setBk(e.target.value),onKeyDown:e=>{if(e.key==='Enter')addCard();}}))),
+   h('div',{className:'btns'},h('button',{className:'btn',onClick:addCard},'Ajouter la carte')),
+   h('details',{className:'road'},h('summary',null,'Ajouter plusieurs cartes d’un coup'),h('textarea',{rows:5,value:bulk,placeholder:'une carte par ligne :\nbook ; livre\nwater ; eau',onChange:e=>setBulk(e.target.value)}),h('div',{className:'btns'},h('button',{className:'btn alt',onClick:addBulk},'Importer les lignes')))),
+  mine.length?h('div',{className:'card'},h('h3',null,'Cartes de ce paquet'),h('details',{className:'road'},h('summary',null,'Voir et retirer des cartes ('+mine.length+')'),h('ul',{className:'plain'},mine.slice(0,80).map(c=>h('li',{key:c.id},h('span',null,c.f+' : '+c.b),h('button',{className:'ghost',onClick:()=>C.upd(s=>({cards:s.cards.filter(x=>x.id!==c.id)}))},'Retirer'))))),h('div',{className:'btns'},h(ConfirmBtn,{label:'Vider ce paquet',confirm:'Confirmer : tout supprimer',onConfirm:()=>{C.upd(s=>({cards:s.cards.filter(c=>c.deck!==deck)}));setQueue(null);}}))):null);
+}
+
+/* ---------- onglet Rendez-vous ---------- */
+const KINDS=Object.keys(EVK).map(k=>[k,EVK[k]]);
+function Sel(props){
+ return h('label',{className:'fld col'},h('span',null,props.label),h('select',{value:String(props.value),onChange:e=>props.onChange(e.target.value)},props.options.map(o=>h('option',{key:o[0],value:String(o[0])},o[1]))));
+}
+function Tim(props){
+ return h('label',{className:'fld col'},h('span',null,props.label),h('input',{type:'time',value:toT(props.value),onChange:e=>{if(e.target.value)props.onChange(fromT(e.target.value));}}));
+}
+function DaysPick(props){
+ return h('div',{className:'days'},DS.map((nm,d)=>h('label',{key:d,className:'cb'},h('input',{type:'checkbox',checked:props.value.indexOf(d)>=0,onChange:e=>props.onChange(e.target.checked?props.value.concat([d]).sort():props.value.filter(x=>x!==d))}),h('span',null,nm))));
+}
+function EventsTab(props){
+ const C=props.C,S=C.S;
+ const blank=()=>{const s0=Math.min(1380,Math.ceil(C.pos.m/30)*30);return {title:'',kind:'rdv',d:C.pos.d,s:s0,e:Math.min(1440,s0+60),rec:'week',loc:'dehors',tb:0,ta:0,mod:'maths'};};
+ const [f,setF]=useState(()=>Object.assign(blank(),C.draft||{}));
+ const [err,setErr]=useState('');
+ useEffect(()=>{if(C.draft)C.setDraft(null);},[]);
+ const set=p=>setF(x=>Object.assign({},x,p));
+ const save=()=>{
+  if(f.kind!=='seance'&&!String(f.title).trim()){setErr('Donne un titre, par exemple « Dentiste ».');return;}
+  if(f.e<=f.s){setErr('L’heure de fin doit être après le début.');return;}
+  C.saveEvent(Object.assign({},f,{title:String(f.title||'').trim(),week:C.now.week}));
+  setF(blank());setErr('');
+ };
+ const mods=STUDY.concat(DAILY);
+ const outside=f.loc==='dehors'&&(f.kind==='rdv'||f.kind==='autre'||f.kind==='imprevu');
+ const list=C.events.slice().sort((a,b)=>a.d-b.d||a.s-b.s);
+ const pd=C.shiftMap;
+ return h('div',{className:'grid mods'},
+  h('div',{className:'card wide'},
+   h('h2',null,f.id?'Modifier cet événement':'Ajouter un rendez-vous, un imprévu ou une séance'),
+   h('p',{className:'muted'},'Ce que tu ajoutes passe avant tout, sauf le sommeil. Le reste du planning se réorganise autour, à partir de maintenant.'),
+   h('div',{className:'form'},
+    h(Sel,{label:'Type',value:f.kind,options:KINDS,onChange:v=>set({kind:v})}),
+    f.kind==='seance'
+     ?h(Sel,{label:'Activité',value:f.mod,options:mods.map(m=>[m.id,m.nom]),onChange:v=>set({mod:v})})
+     :h('label',{className:'fld col'},h('span',null,'Titre'),h('input',{type:'text',value:f.title,placeholder:'Dentiste, visio, famille…',onChange:e=>set({title:e.target.value})})),
+    h(Sel,{label:'Jour',value:f.d,options:DAYS.map((n,i)=>[i,n]),onChange:v=>set({d:+v})}),
+    h(Tim,{label:'Début',value:f.s,onChange:v=>set({s:v})}),
+    h(Tim,{label:'Fin',value:f.e,onChange:v=>set({e:v})}),
+    h(Sel,{label:'Répétition',value:f.rec,options:[['week','Cette semaine seulement'],['weekly','Chaque semaine']],onChange:v=>set({rec:v})}),
+    f.kind!=='seance'&&f.kind!=='libre'?h(Sel,{label:'Lieu',value:f.loc,options:[['dehors','Dehors'],['maison','À la maison']],onChange:v=>set({loc:v})}):null,
+    outside?h(Num,{label:'Trajet avant',value:f.tb||0,suffix:'min',min:0,max:180,onCommit:v=>set({tb:Math.round(v)})}):null,
+    outside?h(Num,{label:'Trajet après',value:f.ta||0,suffix:'min',min:0,max:180,onCommit:v=>set({ta:Math.round(v)})}):null),
+   err?h('p',{className:'warn'},err):null,
+   h('div',{className:'btns'},
+    h('button',{className:'btn',onClick:save},f.id?'Enregistrer les changements':'Ajouter au planning'),
+    f.id?h('button',{className:'btn alt',onClick:()=>{setF(blank());setErr('');}},'Annuler'):null,
+    f.id?h('button',{className:'btn danger',onClick:()=>{C.deleteEvent(f.id);setF(blank());}},'Supprimer'):null)),
+  h('div',{className:'card'},
+   h('h3',null,'Mes événements'),
+   list.length?h('ul',{className:'plain ev'},list.map(e=>h('li',{key:e.id},
+    h('span',null,h('span',{className:'dot',style:{background:e.color||EVC[e.kind]||'#7A5CC9'}}),DS[e.d]+' '+fmt(e.s)+'–'+fmt(e.e)+' : '+(e.kind==='seance'&&MOD[e.mod]?MOD[e.mod].nom:(e.title||EVK[e.kind]))+(e.rec==='weekly'?' (chaque semaine)':'')),
+    h('span',{className:'btns tight'},h('button',{className:'ghost',onClick:()=>setF(Object.assign(blank(),e))},'Modifier'),h('button',{className:'ghost',onClick:()=>C.deleteEvent(e.id)},'Supprimer'))))):h('p',{className:'muted'},'Aucun événement pour cette semaine.')),
+  h('div',{className:'card'},
+   h('h3',null,'Mes horaires de cette semaine'),
+   h('p',{className:'muted'},'Ton planning change d’une semaine à l’autre ? Modifie seulement les jours de cette semaine : le sommeil et les trajets suivent.'),
+   h('div',{className:'shifts'},DAYS.map((nm,d)=>{
+    const has=Object.prototype.hasOwnProperty.call(pd,d),sh=S.shifts[d];
+    const mode=has?(pd[d]?'special':'off'):'normal',past=d<C.now.day;
+    return h('div',{key:d,className:'shift'},
+     h('span',{className:'cb'},nm),
+     h('select',{value:mode,disabled:past,'aria-label':'Horaires de '+nm,onChange:e=>{const v=e.target.value;if(v==='normal')C.setShiftOv(d,undefined);else if(v==='off')C.setShiftOv(d,null);else C.setShiftOv(d,sh||[480,960]);}},
+      h('option',{value:'normal'},'Habituel'),h('option',{value:'off'},'Pas de travail'),h('option',{value:'special'},'Horaires spéciaux')),
+     mode==='special'&&sh?h('span',{className:'tin'},h('input',{type:'time',value:toT(sh[0]),disabled:past,onChange:e=>{const a=fromT(e.target.value);if(a<sh[1]-30)C.setShiftOv(d,[a,sh[1]]);}}),' à ',h('input',{type:'time',value:toT(sh[1]),disabled:past,onChange:e=>{const b=fromT(e.target.value);if(b>sh[0]+30)C.setShiftOv(d,[sh[0],b]);}})):h('span',{className:'muted'},mode==='off'?'Libre':(sh?fmt(sh[0])+'–'+fmt(sh[1]):'Libre')));
+   }))));
+}
+
+/* ---------- onglet Semaine ---------- */
+function WeekTab(props){
+ const C=props.C,H=768;
+ const hours=[];for(let i=0;i<24;i+=2)hours.push(i);
+ return h('div',{className:'card'},
+  h('p',{className:'muted'},'Touche un bloc pour le voir sur la scène.'),
+  h('div',{className:'wk-wrap'},h('div',{className:'wk'},
+   h('div',{className:'wk-ax',style:{height:H+34}},h('div',{style:{height:34}}),hours.map(i=>h('span',{key:i,style:{top:34+i/24*H}},pad(i)+' h'))),
+   DAYS.map((nm,d)=>h('div',{key:d,className:'wk-c'+(C.now.day===d?' today':'')},
+    h('div',{className:'wk-h'},DS[d]),
+    h('div',{className:'wk-b',style:{height:H}},C.plan.days[d].blocks.map((b,i)=>{
+     const hgt=Math.max(14,(b.e-b.s)/1440*H-1),k=blockKey(b),dn=C.done[k];
+     return h('button',{key:k+i,className:'wk-k'+(b.missed?' missed':'')+(dn?' done':''),style:{top:b.s/1440*H,height:hgt,background:colorOf(b)+'33',borderLeftColor:colorOf(b)},onClick:()=>{C.setSel({d:d,m:b.s});C.setTab('jour');}},
+      hgt>=26?h('span',null,b.label):null,hgt>=40?h('small',null,fmt(b.s)+'–'+fmt(b.e)):null);
+    })))))));
+}
+
+/* ---------- onglet Modules ---------- */
+function Roadmap(props){
+ const C=props.C,id=props.id,list=C.store.roadmap[id]||[];
+ const [txt,setTxt]=useState('');
+ const setList=l=>C.upd(s=>({roadmap:Object.assign({},s.roadmap,{[id]:l})}));
+ const okN=list.filter(x=>x.ok).length;
+ return h('details',{className:'road'},
+  h('summary',null,'Feuille de route ('+okN+'/'+list.length+')'),
+  h('ul',{className:'plain'},list.map((x,i)=>h('li',{key:i},h('label',{className:'cb'},h('input',{type:'checkbox',checked:!!x.ok,onChange:()=>setList(list.map((y,j)=>j===i?{t:y.t,ok:!y.ok}:y))}),h('span',null,x.t)),h('button',{className:'ghost',onClick:()=>setList(list.filter((y,j)=>j!==i)),'aria-label':'Retirer '+x.t},'Retirer')))),
+  h('div',{className:'add'},h('input',{type:'text',placeholder:'Ajouter un chapitre',value:txt,onChange:e=>setTxt(e.target.value),onKeyDown:e=>{if(e.key==='Enter'&&txt.trim()){setList(list.concat([{t:txt.trim(),ok:false}]));setTxt('');}}}),h('button',{className:'btn sm',onClick:()=>{if(txt.trim()){setList(list.concat([{t:txt.trim(),ok:false}]));setTxt('');}}},'Ajouter')),
+  h('p',{className:'muted'},'Liste de départ à ajuster selon ton programme et ta voie (PASS ou LAS).'));
+}
+function AddModule(props){
+ const C=props.C,S=C.S;
+ const [nom,setNom]=useState(''),[col,setCol]=useState('#7A8B99'),[q,setQ]=useState(2),[len,setLen]=useState(40),[en,setEn]=useState('any');
+ const add=()=>{
+  if(!nom.trim()){C.toast('Donne un nom au module.');return;}
+  const id='c'+Date.now().toString(36);
+  C.setS({customMods:(S.customMods||[]).concat([{id:id,nom:nom.trim(),color:col,quota:Math.round(q*60),len:len,energy:en}]),quota:Object.assign({},S.quota,{[id]:Math.round(q*60)}),mods:Object.assign({},S.mods,{[id]:{len:len,energy:en,days:[0,1,2,3,4,5,6],max:2}})});
+  setNom('');C.toast('Module ajouté.');
+ };
+ return h('div',{className:'card wide'},h('h3',null,'Ajouter mon propre module'),
+  h('p',{className:'muted'},'Permis, code de la route, Shopify, une autre langue… tout ce que tu veux apprendre ou construire.'),
+  h('div',{className:'form'},
+   h('label',{className:'fld col'},h('span',null,'Nom'),h('input',{type:'text',value:nom,onChange:e=>setNom(e.target.value),placeholder:'Code de la route'})),
+   h('label',{className:'fld col'},h('span',null,'Couleur'),h('input',{type:'color',value:col,onChange:e=>setCol(e.target.value)})),
+   h(Num,{label:'Quota par semaine',value:q,suffix:'h',min:0.5,max:40,onCommit:v=>setQ(v)}),
+   h(Num,{label:'Durée d’une séance',value:len,suffix:'min',min:10,max:180,onCommit:v=>setLen(Math.round(v))}),
+   h(Sel,{label:'Moment préféré',value:en,options:[['high','Plutôt avant 17h'],['low','Plutôt le soir'],['any','Peu importe']],onChange:v=>setEn(v)})),
+  h('div',{className:'btns'},h('button',{className:'btn',onClick:add},'Ajouter le module')));
+}
+function ModulesTab(props){
+ const C=props.C,S=C.S,today=C.now.iso;
+ const stat={};
+ C.plan.days.forEach(dd=>dd.blocks.forEach(b=>{if(b.type==='task'&&!b.missed){const o=stat[b.mod]||(stat[b.mod]={p:0,d:0,n:0,nd:0});const l=b.e-b.s;o.p+=l;o.n++;if(C.done[blockKey(b)]){o.d+=l;o.nd++;}}}));
+ const isStudy=id=>STUDY.some(m=>m.id===id);
+ const totalPlan=STUDY.reduce((a,m)=>a+((stat[m.id]||{}).p||0),0);
+ const wkd=C.plan.days.slice(5).reduce((a,dd)=>a+dd.blocks.filter(b=>b.type==='task'&&!b.missed&&isStudy(b.mod)).reduce((x,b)=>x+b.e-b.s,0),0);
+ return h('div',{className:'grid mods'},
+  h('div',{className:'card wide'},h('h2',null,'Cette semaine'),h('p',null,'Études et revenus planifiés : '+durL(totalPlan)+', dont '+durL(wkd)+' le week-end ('+durL(S.weekendCap)+' par jour de week-end au maximum).'),
+   STUDY.some(m=>C.plan.rem[m.id]>0)?h('p',{className:'warn'},'Pas assez de temps libre pour tout placer : '+STUDY.filter(m=>C.plan.rem[m.id]>0).map(m=>m.nom+' ('+durL(C.plan.rem[m.id])+')').join(', ')+'. Baisse un quota, ajoute des jours possibles à un module ou augmente la limite quotidienne dans les réglages.'):h('p',{className:'ok'},'Tous les quotas sont placés dans la semaine.')),
+  STUDY.map(m=>{
+   const o=stat[m.id]||{p:0,d:0,n:0,nd:0},ms=S.mods[m.id];
+   const nDue=C.store.cards.filter(c=>c.deck===m.id&&c.due<=today).length,nCards=C.store.cards.filter(c=>c.deck===m.id).length;
+   const setM=p=>C.setS({mods:Object.assign({},S.mods,{[m.id]:Object.assign({},ms,p)})});
+   return h('div',{key:m.id,className:'card mod'},
+    h('div',{className:'row'},h('h3',null,h('span',{className:'dot',style:{background:m.color}}),m.nom),h('span',{className:'muted'},durL(o.d)+' faits sur '+durL(o.p)+' prévus')),
+    Bar({planned:o.p,done:o.d,total:Math.max(S.quota[m.id],o.p,1),color:m.color}),
+    m.niveau?h('p',{className:'k lvl'},m.niveau):null,
+    h('p',{className:'muted'},m.note),
+    h(Num,{label:'Quota de la semaine',value:+(S.quota[m.id]/60).toFixed(2),suffix:'h',step:.5,min:0,max:40,onCommit:v=>C.setS({quota:Object.assign({},S.quota,{[m.id]:Math.round(v*60)})})}),
+    nCards?h('div',{className:'row small'},h('span',null,nDue+' carte'+(nDue>1?'s':'')+' à réviser'),h('button',{className:'ghost',onClick:()=>{C.setReviseDeck(m.id);C.setTab('reviser');}},'Réviser')):null,
+    h('details',{className:'road'},h('summary',null,'Régler ce module'),
+     h(Txt,{label:'Nom',value:m.nom,onCommit:v=>setM({nom:v.trim()})}),
+     h('label',{className:'fld col'},h('span',null,'Couleur'),h('input',{type:'color',value:m.color,onChange:e=>setM({color:e.target.value})})),
+     h(Num,{label:'Durée d’une séance',value:ms.len,suffix:'min',min:10,max:180,onCommit:v=>setM({len:Math.round(v)})}),
+     h(Num,{label:'Séances maximum par jour',value:ms.max,min:1,max:5,onCommit:v=>setM({max:Math.round(v)})}),
+     h(Sel,{label:'Moment préféré',value:ms.energy,options:[['high','Plutôt avant 17h'],['low','Plutôt le soir'],['any','Peu importe']],onChange:v=>setM({energy:v})}),
+     h('p',{className:'k'},'Jours possibles'),
+     h(DaysPick,{value:ms.days,onChange:v=>setM({days:v})}),
+     h('div',{className:'btns'},h('button',{className:'btn alt sm',onClick:()=>setM({nom:'',color:''})},'Nom et couleur d’origine'),m.custom?h(ConfirmBtn,{label:'Supprimer ce module',confirm:'Confirmer la suppression',onConfirm:()=>{const q=Object.assign({},S.quota),mm=Object.assign({},S.mods);delete q[m.id];delete mm[m.id];C.setS({customMods:S.customMods.filter(c=>c.id!==m.id),quota:q,mods:mm});}}):null)),
+    h(Roadmap,{C:C,id:m.id}));
+  }),
+  h(AddModule,{C:C}),
+  h('div',{className:'card wide'},h('h3',null,'Chaque jour'),
+   DAILY.map(m=>{
+    const o=stat[m.id]||{n:0,nd:0,p:0},dc=S.daily[m.id];
+    const setD=p=>C.setS({daily:Object.assign({},S.daily,{[m.id]:Object.assign({},dc,p)})});
+    return h('div',{key:m.id,className:'daily'},
+     h('p',{className:'k'},h('span',{className:'dot',style:{background:m.color}}),m.nom),
+     h('p',{className:'muted'},o.nd+'/'+o.n+' séances faites, '+durL(o.p)+' prévues. '+m.note),
+     h('details',{className:'road'},h('summary',null,'Régler : '+durL(dc.dur)+', entre '+fmt(dc.from)+' et '+fmt(dc.to)),
+      h(Txt,{label:'Nom',value:m.nom,onCommit:v=>setD({nom:v.trim()})}),
+      h('label',{className:'fld col'},h('span',null,'Couleur'),h('input',{type:'color',value:m.color,onChange:e=>setD({color:e.target.value})})),
+      h(Num,{label:'Durée',value:dc.dur,suffix:'min',min:5,max:180,onCommit:v=>setD({dur:Math.round(v)})}),
+      h('div',{className:'form'},h(Tim,{label:'Plus tôt à',value:dc.from,onChange:v=>setD({from:v})}),h(Tim,{label:'Plus tard à',value:dc.to,onChange:v=>setD({to:v})})),
+      h('p',{className:'k'},'Jours'),
+      h(DaysPick,{value:dc.days,onChange:v=>setD({days:v})})));
+   })));
+}
+
+/* ---------- onglet Suivi ---------- */
+function Spark(props){
+ const v=props.values;
+ if(v.length<2)return h('p',{className:'muted'},'Ajoute au moins deux pesées pour voir la courbe.');
+ const mn=Math.min.apply(null,v),mx=Math.max.apply(null,v),W=300,Hh=70,r=(mx-mn)||1;
+ const pts=v.map((x,i)=>(i/(v.length-1)*W).toFixed(1)+','+(Hh-4-(x-mn)/r*(Hh-12)).toFixed(1)).join(' ');
+ return h('svg',{viewBox:'0 0 '+W+' '+Hh,className:'spark',role:'img','aria-label':'Courbe du poids'},h('polyline',{points:pts,fill:'none',stroke:'var(--accent)',strokeWidth:2.5,strokeLinejoin:'round'}));
+}
+function WeekBars(props){
+ const C=props.C;
+ const data=C.plan.days.map(dd=>{let p=0,d=0;dd.blocks.forEach(b=>{if((b.type==='task'||b.type==='todo')&&!b.missed){p+=b.e-b.s;if(C.done[blockKey(b)])d+=b.e-b.s;}});return {p:p,d:d};});
+ const mx=Math.max(60,...data.map(x=>x.p));
+ return h('div',{className:'bars',role:'img','aria-label':'Minutes prévues et faites par jour'},data.map((x,i)=>h('div',{key:i,className:'bcol'},
+  h('div',{className:'bstack'},h('i',{className:'pl',style:{height:(x.p/mx*100)+'%'}}),h('i',{className:'dn',style:{height:(x.d/mx*100)+'%'}})),
+  h('span',null,DS[i]),h('small',null,x.d?durL(x.d):'0'))));
+}
+function WeeksChart(props){
+ const w=props.C.store.weeklyStats||{},keys=Object.keys(w).sort().slice(-8);
+ if(keys.length<2)return h('p',{className:'muted'},'Le graphique des semaines apparaît dès la deuxième semaine.');
+ const mx=Math.max(60,...keys.map(k=>w[k].p));
+ return h('div',{className:'bars'},keys.map(k=>h('div',{key:k,className:'bcol'},h('div',{className:'bstack'},h('i',{className:'pl',style:{height:(w[k].p/mx*100)+'%'}}),h('i',{className:'dn',style:{height:(w[k].d/mx*100)+'%'}})),h('span',null,frDate(k)),h('small',null,durL(w[k].d)))));
+}
+function Heat(props){
+ const C=props.C,hist=C.store.hist||{},today=C.now.iso,start=addDays(C.now.week,-49);
+ const cells=[];
+ for(let i=0;i<56;i++){const dt=addDays(start,i),n=hist[dt]||0,lv=dt>today?'f':n===0?0:n<2?1:n<4?2:3;cells.push(h('i',{key:i,className:'hc l'+lv,title:frDate(dt)+' : '+n+' fait'+(n>1?'s':'')}));}
+ return h('div',null,h('div',{className:'heat',role:'img','aria-label':'Régularité des 8 dernières semaines'},cells),h('p',{className:'muted'},'Chaque case est un jour (une colonne par semaine, du lundi au dimanche). Plus c’est foncé, plus tu as validé de blocs.'));
+}
+function BilanSummary(props){
+ const rv=props.C.store.reviews||{},keys=Object.keys(rv).sort();
+ if(!keys.length)return h('p',{className:'muted'},'Remplis le bilan du soir dans l’onglet Jour : tu verras ici ce qui te freine le plus.');
+ const cnt={};let en=0;
+ keys.forEach(k=>{(rv[k].block||[]).forEach(b=>{cnt[b]=(cnt[b]||0)+1;});en+=rv[k].energy||0;});
+ const top=Object.keys(cnt).filter(k=>k!=='Rien').sort((a,b)=>cnt[b]-cnt[a]).slice(0,3);
+ return h('div',null,h('p',null,'Énergie moyenne : '+(en/keys.length).toFixed(1).replace('.',',')+' sur 5, sur '+keys.length+' bilan'+(keys.length>1?'s':'')+'.'),top.length?h('p',null,'Ce qui te freine le plus : '+top.map(k=>k.toLowerCase()+' ('+cnt[k]+')').join(', ')+'.'):h('p',{className:'muted'},'Rien de notable pour l’instant.'),
+  h('ul',{className:'plain'},keys.slice(-5).reverse().map(k=>h('li',{key:k},h('span',null,frDate(k)+' : énergie '+rv[k].energy+', humeur '+rv[k].mood+((rv[k].block||[]).length?', '+rv[k].block.join(', ').toLowerCase():'')),rv[k].note?h('span',{className:'muted'},rv[k].note):null))));
+}
+function TrackTab(props){
+ const C=props.C,st=C.store,S=C.S;
+ const [kg,setKg]=useState(''),[amt,setAmt]=useState(''),[note,setNote]=useState('');
+ const w=st.weights,last=w.length?w[w.length-1]:null,first=w.length?w[0]:null;
+ const month=C.now.iso.slice(0,7);
+ const incM=st.incomes.filter(x=>x.date.slice(0,7)===month).reduce((a,x)=>a+x.amount,0),incT=st.incomes.reduce((a,x)=>a+x.amount,0);
+ const sp=[];C.plan.days.forEach(dd=>dd.blocks.forEach(b=>{if(b.type==='task'&&b.mod==='sport'&&!b.missed)sp.push(b);}));
+ const spDone=sp.filter(b=>C.done[blockKey(b)]).length;
+ const addW=()=>{const n=parseFloat(String(kg).replace(',','.'));if(isNaN(n)||n<30||n>300)return;C.upd(s=>({weights:s.weights.concat([{date:C.now.iso,v:n}])}));setKg('');};
+ const addI=()=>{const n=parseFloat(String(amt).replace(',','.'));if(isNaN(n))return;C.upd(s=>({incomes:s.incomes.concat([{date:C.now.iso,amount:n,note:note.trim()}])}));setAmt('');setNote('');};
+ return h('div',{className:'grid mods'},
+  h('div',{className:'card'},h('h2',null,'Cette semaine'),h('p',{className:'muted'},'Minutes prévues (clair) et faites (foncé) par jour.'),h(WeekBars,{C:C})),
+  h('div',{className:'card'},h('h2',null,'Les semaines passées'),h(WeeksChart,{C:C})),
+  h('div',{className:'card wide'},h('h2',null,'Régularité'),h(Heat,{C:C})),
+  h('div',{className:'card wide'},h('h2',null,'Mes bilans'),h(BilanSummary,{C:C})),
+  h('div',{className:'card'},h('h2',null,'Poids'),
+   last?h('p',{className:'big'},String(last.v).replace('.',',')+' kg'):h('p',{className:'muted'},'Aucune pesée pour l’instant.'),
+   last&&first&&w.length>1?h('p',{className:'muted'},'Depuis le '+frDate(first.date)+' : '+((last.v-first.v)>0?'+':'')+(last.v-first.v).toFixed(1).replace('.',',')+' kg'+(S.weightTarget?' (objectif : '+S.weightTarget+' kg)':'')):(S.weightTarget?h('p',{className:'muted'},'Objectif : '+S.weightTarget+' kg'):null),
+   h(Spark,{values:w.slice(-20).map(x=>x.v)}),
+   h('div',{className:'add'},h('input',{type:'text',inputMode:'decimal',placeholder:'Poids en kg',value:kg,onChange:e=>setKg(e.target.value),onKeyDown:e=>{if(e.key==='Enter')addW();}}),h('button',{className:'btn sm',onClick:addW},'Ajouter la pesée')),
+   w.length?h('ul',{className:'plain'},w.slice(-6).reverse().map((x,i)=>h('li',{key:i},frDate(x.date)+' : '+String(x.v).replace('.',',')+' kg'))):null),
+  h('div',{className:'card'},h('h2',null,'Revenus en ligne'),
+   h('p',{className:'big'},incM.toFixed(2).replace('.',',')+' € ce mois-ci'),h('p',{className:'muted'},'Total depuis le début : '+incT.toFixed(2).replace('.',',')+' €'),
+   h('div',{className:'add two'},h('input',{type:'text',inputMode:'decimal',placeholder:'Montant en €',value:amt,onChange:e=>setAmt(e.target.value)}),h('input',{type:'text',placeholder:'D’où vient cet argent ?',value:note,onChange:e=>setNote(e.target.value),onKeyDown:e=>{if(e.key==='Enter')addI();}}),h('button',{className:'btn sm',onClick:addI},'Ajouter')),
+   st.incomes.length?h('ul',{className:'plain'},st.incomes.slice(-6).reverse().map((x,i)=>h('li',{key:i},frDate(x.date)+' : '+x.amount.toFixed(2).replace('.',',')+' €'+(x.note?', '+x.note:'')))):null),
+  h('div',{className:'card wide'},h('h2',null,'Sport cette semaine'),h('p',{className:'big'},spDone+' séance'+(spDone>1?'s':'')+' sur '+sp.length),
+   h('p',{className:'muted'},'Objectif : reprendre en club petit à petit, avec un poids qui descend doucement.'),
+   h('p',{className:'warn'},'Épaule : fais-la évaluer par un kiné ou un médecin du sport avant de remettre des charges lourdes ou du combat. En cas de douleur ou d’instabilité, stoppe la séance.')));
+}
+
+/* ---------- onglet Réglages ---------- */
+function SettingsTab(props){
+ const C=props.C,S=C.S0;
+ const [exp,setExp]=useState('');
+ const [reset,setReset]=useState(false);
+ const [ics,setIcs]=useState('');
+ const [io,setIo]=useState({study:true,events:true,work:true,rest:false,alarm:10});
+ const makeIcs=()=>{
+  const txt=buildICS(C.plan,C.now.week,io);
+  setIcs(txt);
+  try{const blob=new Blob([txt],{type:'text/calendar'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='agenda-semaine.ics';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);}catch(e){}
+  C.toast('Fichier calendrier généré.');
+ };
+ const setShift=(d,v)=>{const sh=S.shifts.slice();sh[d]=v;C.setS({shifts:sh});};
+ return h('div',{className:'grid mods'},
+  h('div',{className:'card wide'},h('h2',null,'Horaires de travail'),
+   h('label',{className:'fld'},h('span',null,'Nom du lieu de travail'),h('span',{className:'fld-in'},h('input',{type:'text',value:S.workName,onChange:e=>C.setS({workName:e.target.value})}))),
+   h('div',{className:'shifts'},DAYS.map((nm,d)=>{
+    const sh=S.shifts[d];
+    return h('div',{key:d,className:'shift'},
+     h('label',{className:'cb'},h('input',{type:'checkbox',checked:!!sh,onChange:e=>setShift(d,e.target.checked?[480,960]:null)}),h('span',null,nm)),
+     sh?h('span',{className:'tin'},h('input',{type:'time',value:toT(sh[0]),onChange:e=>{const a=fromT(e.target.value);if(a<sh[1]-30)setShift(d,[a,sh[1]]);}}),' à ',h('input',{type:'time',value:toT(sh[1]),onChange:e=>{const b=fromT(e.target.value);if(b>sh[0]+30)setShift(d,[sh[0],b]);}})):h('span',{className:'muted'},'Libre'));
+   }))),
+  h('div',{className:'card'},h('h3',null,'Sommeil et trajets'),
+   h(Num,{label:'Durée de sommeil visée',value:S.sleepH,suffix:'h',min:5,max:10,onCommit:v=>C.setS({sleepH:v})}),
+   h(Num,{label:'Préparation avant de partir',value:S.prep,suffix:'min',min:10,max:120,onCommit:v=>C.setS({prep:Math.round(v)})}),
+   h(Num,{label:'Trajet, à l’aller et au retour',value:S.commute,suffix:'min',min:0,max:90,onCommit:v=>C.setS({commute:Math.round(v)})}),
+   h(Num,{label:'Routine du soir',value:S.eve,suffix:'min',min:10,max:90,onCommit:v=>C.setS({eve:Math.round(v)})}),
+   h('label',{className:'fld'},h('span',null,'Réveil le plus tard'),h('span',{className:'fld-in'},h('input',{type:'time',value:toT(S.wakeCap),onChange:e=>C.setS({wakeCap:fromT(e.target.value)})})))),
+  h('div',{className:'card'},h('h3',null,'Charge de travail'),
+   h(Num,{label:'Travail max un jour de semaine',value:+(S.weekdayCap/60).toFixed(2),suffix:'h',min:0,max:8,onCommit:v=>C.setS({weekdayCap:Math.round(v*60)})}),
+   h(Num,{label:'Travail visé un jour de week-end',value:+(S.weekendCap/60).toFixed(2),suffix:'h',min:0,max:10,onCommit:v=>C.setS({weekendCap:Math.round(v*60)})}),
+   h(Num,{label:'Durée du minuteur',value:S.pomoWork,suffix:'min',min:10,max:90,onCommit:v=>C.setS({pomoWork:Math.round(v)})}),
+   h(Num,{label:'Durée de la pause',value:S.pomoBreak,suffix:'min',min:3,max:30,onCommit:v=>C.setS({pomoBreak:Math.round(v)})})),
+  h('div',{className:'card'},h('h3',null,'Repas'),
+   h('div',{className:'form'},h(Tim,{label:'Déjeuner vers',value:S.meals.lunch,onChange:v=>C.setS({meals:Object.assign({},S.meals,{lunch:v})})}),h(Tim,{label:'Dîner vers',value:S.meals.dinner,onChange:v=>C.setS({meals:Object.assign({},S.meals,{dinner:v})})})),
+   h(Num,{label:'Durée d’un repas',value:S.meals.dur,suffix:'min',min:15,max:120,onCommit:v=>C.setS({meals:Object.assign({},S.meals,{dur:Math.round(v)})})})),
+  h('div',{className:'card'},h('h3',null,'Sport'),
+   h('p',{className:'muted'},'Les jours, la durée et le créneau du sport se règlent dans l’onglet Modules.'),
+   h('label',{className:'cb'},h('input',{type:'checkbox',checked:S.sportHome,onChange:e=>C.setS({sportHome:e.target.checked})}),h('span',null,'Je fais mon sport à la maison (sinon dehors)')),
+   h(Num,{label:'Objectif de poids',value:S.weightTarget,suffix:'kg',min:0,max:300,onCommit:v=>C.setPref({weightTarget:v?String(v):''})})),
+  h('div',{className:'card wide'},h('h3',null,'Personnalisation'),
+   h('div',{className:'form'},
+    h(Sel,{label:'Thème',value:C.store.theme||'auto',options:[['auto','Automatique'],['light','Clair'],['dark','Sombre']],onChange:v=>C.setTheme(v)}),
+    h(Txt,{label:'Objectif ou examen',value:S.examLabel||'',placeholder:'Concours PASS',onCommit:v=>C.setPref({examLabel:v.trim()})}),
+    h('label',{className:'fld col'},h('span',null,'Date de l’objectif'),h('input',{type:'date',value:S.examDate||'',onChange:e=>C.setPref({examDate:e.target.value})}))),
+   h(Txt,{label:'Mon pourquoi (affiché en haut de l’onglet Jour)',value:S.why||'',multi:true,placeholder:'Je veux réussir médecine, alors chaque heure compte.',onCommit:v=>C.setPref({why:v.trim()})}),
+   h('label',{className:'cb'},h('input',{type:'checkbox',checked:S.sound!==false,onChange:e=>C.setPref({sound:e.target.checked})}),h('span',null,'Petit son à la fin du minuteur')),
+   h('div',{className:'form'},
+    h(Num,{label:'Tâches libres : max un jour de semaine',value:S.todoCapWd,suffix:'min',min:0,max:480,onCommit:v=>C.setS({todoCapWd:Math.round(v)})}),
+    h(Num,{label:'Tâches libres : max un jour de week-end',value:S.todoCapWe,suffix:'min',min:0,max:600,onCommit:v=>C.setS({todoCapWe:Math.round(v)})}))),
+  h('div',{className:'card wide'},h('h3',null,'Calendrier du téléphone'),
+   h('p',{className:'muted'},'Génère un fichier calendrier de ta semaine avec une alerte avant chaque bloc. Sur iPhone, il s’ouvre dans l’appli Calendrier : c’est ainsi que tu reçois des rappels.'),
+   h('div',{className:'days'},[['study','Études et tâches'],['events','Rendez-vous et imprévus'],['work','Travail'],['rest','Routines et repas']].map(o=>h('label',{key:o[0],className:'cb'},h('input',{type:'checkbox',checked:!!io[o[0]],onChange:e=>setIo(Object.assign({},io,{[o[0]]:e.target.checked}))}),h('span',null,o[1])))),
+   h(Num,{label:'Alerte avant chaque bloc (0 = au début)',value:io.alarm,suffix:'min',min:0,max:120,onCommit:v=>setIo(Object.assign({},io,{alarm:Math.round(v)}))}),
+   h('div',{className:'btns'},h('button',{className:'btn',onClick:makeIcs},'Générer le fichier calendrier')),
+   ics?h('div',null,h('p',{className:'muted'},'Si le téléchargement ne démarre pas, copie ce texte dans un fichier nommé agenda-semaine.ics. Astuce : importe-le dans un calendrier à part, que tu pourras supprimer avant de réimporter une nouvelle version.'),h('textarea',{rows:5,readOnly:true,value:ics,onFocus:e=>e.target.select()})):null),
+  h('div',{className:'card wide'},h('h3',null,'Sauvegarde'),
+   h('p',{className:'muted'},'Tes données restent dans ce navigateur. Pour passer du téléphone au PC, copie le texte d’export puis colle-le dans l’autre appareil.'),
+   h('div',{className:'btns'},
+    h('button',{className:'btn alt',onClick:()=>setExp(JSON.stringify({S:C.store.S,done:C.store.done,roadmap:C.store.roadmap,weights:C.store.weights,incomes:C.store.incomes,hist:C.store.hist,events:C.store.events,shiftOv:C.store.shiftOv,todos:C.store.todos,cards:C.store.cards,habits:C.store.habits,habitLog:C.store.habitLog,reviews:C.store.reviews}))},'Afficher l’export'),
+    h('button',{className:'btn alt',onClick:()=>{try{const p=JSON.parse(exp);C.upd(s=>({S:mergeS(p.S||{}),done:p.done||{},roadmap:p.roadmap||s.roadmap,weights:p.weights||[],incomes:p.incomes||[],hist:p.hist||{},events:Array.isArray(p.events)?p.events:[],shiftOv:p.shiftOv||{week:'',map:{}},todos:Array.isArray(p.todos)?p.todos:[],cards:Array.isArray(p.cards)?p.cards:s.cards,habits:Array.isArray(p.habits)?p.habits:[],habitLog:p.habitLog||{},reviews:p.reviews||{},override:null}));C.toast('Import réussi.');}catch(e){C.toast('Import impossible : le texte n’est pas valide.');}}},'Importer le texte collé'),
+    h('button',{className:'btn alt',onClick:()=>{try{navigator.clipboard.writeText(exp).then(()=>C.toast('Copié.'),()=>C.toast('Copie impossible : sélectionne le texte et copie-le.'));}catch(e){C.toast('Copie impossible : sélectionne le texte et copie-le.');}}},'Copier le texte')),
+   h('textarea',{value:exp,onChange:e=>setExp(e.target.value),rows:4,placeholder:'Export ou texte à importer',onFocus:e=>e.target.select()}),
+   h('div',{className:'btns pad'},
+    h('button',{className:'btn alt',onClick:()=>{C.upd({override:null});C.toast('Planning régénéré.');}},'Régénérer le planning de la semaine'),
+    h('button',{className:'btn danger',onClick:()=>{if(!reset){setReset(true);return;}try{localStorage.removeItem(KEY);}catch(e){}location.reload();}},reset?'Confirmer : tout effacer':'Tout réinitialiser'))));
+}
+
+/* ---------- application ---------- */
+function App(){
+ const [store,setStore]=useState(load);
+ const [now,setNow]=useState(parisNow);
+ const [sel,setSel]=useState(null);
+ const [tab,setTab]=useState('jour');
+ const [focus,setFocus]=useState(null);
+ const [tm,setTm]=useState({mode:null});
+ const [msg,setMsg]=useState('');
+ const [draft,setDraft]=useState(null);
+ const [reviseDeck,setReviseDeck]=useState('arabe');
+ const S0=store.S;
+ syncCustom(S0);
+ const shiftMap=(store.shiftOv&&store.shiftOv.week===now.week)?store.shiftOv.map:{};
+ const S=useMemo(()=>effS(S0,store.shiftOv,store.capOv,now.week),[S0,store.shiftOv,store.capOv,now.week]);
+ const evts=useMemo(()=>store.events.filter(e=>e.rec==='weekly'||e.week===now.week),[store.events,now.week]);
+ const ctx=useMemo(()=>({evts:evts,todos:store.todos}),[evts,store.todos]);
+ const upd=useCallback(p=>setStore(s=>Object.assign({},s,typeof p==='function'?p(s):p)),[]);
+ const toast=useCallback(t=>{setMsg(t);},[]);
+ useEffect(()=>{const id=setInterval(()=>setNow(parisNow()),15000);return ()=>clearInterval(id);},[]);
+ useEffect(()=>{if(store.weekKey!==now.week)upd(s=>({weekKey:now.week,done:{},override:null,shiftOv:{week:now.week,map:{}},capOv:{week:now.week,map:{}},events:(s.events||[]).filter(e=>e.rec==='weekly'),todos:(s.todos||[]).filter(t=>!t.done).map(t=>Object.assign({},t,{due:null}))}));},[now.week,store.weekKey,upd]);
+ useEffect(()=>{try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}},[store]);
+ useEffect(()=>{if(!msg)return;const id=setTimeout(()=>setMsg(''),4000);return ()=>clearTimeout(id);},[msg]);
+ useEffect(()=>{
+  try{const r=document.documentElement;if(store.theme==='light'||store.theme==='dark')r.setAttribute('data-theme',store.theme);else r.removeAttribute('data-theme');}catch(e){}
+ },[store.theme]);
+ const base=useMemo(()=>buildPlan(S,null,()=>false,null,null,ctx),[S,ctx]);
+ const plan=store.override&&store.override.plan?store.override.plan:base;
+ const pos=sel||{d:now.day,m:now.min};
+ const done=store.done;
+ useEffect(()=>{
+  const dd=plan.days[now.day];if(!dd)return;
+  const c=dd.blocks.filter(b=>(b.type==='task'||b.type==='todo')&&!b.missed&&done[blockKey(b)]).length;
+  if((store.hist||{})[now.iso]!==c)upd(s=>({hist:Object.assign({},s.hist,{[now.iso]:c})}));
+ },[done,plan,now.iso,now.day,store.hist,upd]);
+ useEffect(()=>{
+  let p=0,d=0;
+  plan.days.forEach(dd=>dd.blocks.forEach(b=>{if((b.type==='task'||b.type==='todo')&&!b.missed){p+=b.e-b.s;if(done[blockKey(b)])d+=b.e-b.s;}}));
+  const cur=(store.weeklyStats||{})[now.week];
+  if(!cur||cur.p!==p||cur.d!==d)upd(s=>({weeklyStats:Object.assign({},s.weeklyStats,{[now.week]:{p:p,d:d}})}));
+ },[plan,done,now.week,store.weeklyStats,upd]);
+ useEffect(()=>{
+  if(!tm.mode||tm.paused)return;
+  const id=setInterval(()=>{
+   setTm(t=>{
+    if(!t.mode||t.paused)return t;
+    if(t.left>1)return Object.assign({},t,{left:t.left-1});
+    if(S.sound!==false)beep();
+    if(t.mode==='work'&&!t.short)return {mode:'break',left:S.pomoBreak*60,total:S.pomoBreak*60,label:'Pause'};
+    if(t.short)return {mode:null,msg:'5 minutes passées. Tu continues ?'};
+    return {mode:null};
+   });
+  },1000);
+  return ()=>clearInterval(id);
+ },[tm.mode,tm.paused,S.pomoBreak,S.sound]);
+ const setS=useCallback(patch=>upd(s=>({S:Object.assign({},s.S,patch),override:null})),[upd]);
+ const setPref=useCallback(patch=>upd(s=>({S:Object.assign({},s.S,patch)})),[upd]);
+ const setTheme=useCallback(v=>upd({theme:v}),[upd]);
+ const toggleDone=useCallback(b=>{
+  const k=blockKey(b);
+  upd(s=>{
+   const d=Object.assign({},s.done);const was=!!d[k];
+   if(was)delete d[k];else d[k]=1;
+   const out={done:d};
+   if(b.type==='todo')out.todos=s.todos.map(t=>t.id===b.tid?Object.assign({},t,{done:!was}):t);
+   return out;
+  });
+ },[upd]);
+ const startTimer=(mins,label,short)=>setTm({mode:'work',left:mins*60,total:mins*60,label:label,short:!!short,paused:false});
+ const isDone=b=>!!done[blockKey(b)];
+ const replanNow=()=>{upd({override:{plan:buildPlan(S,plan,isDone,{d:now.day,m:now.min},null,ctx)}});toast('Journée replanifiée à partir de maintenant.');};
+ const replanMissed=()=>{
+  const from=now.day<6?{d:now.day+1,m:0}:{d:6,m:1440};
+  upd({override:{plan:buildPlan(S,plan,isDone,from,null,ctx)}});
+  toast(now.day<6?'Le reste d’aujourd’hui est reporté sur les jours suivants.':'Dernier jour de la semaine : le reste est signalé comme manqué.');
+ };
+ const addUnforeseen=mins=>{
+  const lo=now.min,hi=mins>0?Math.min(1440,lo+mins):1440;
+  upd({override:{plan:buildPlan(S,plan,isDone,{d:now.day,m:hi},{drop:[lo,hi],add:{s:lo,e:hi}},ctx)}});
+  toast('Imprévu noté : '+(mins>0?durL(mins):'le reste de la journée')+' libéré, le reste est replanifié.');
+ };
+ const applyChange=patch=>{
+  const st=Object.assign({},store,patch);
+  const S2=effS(S0,st.shiftOv,st.capOv,now.week);
+  const ev2=st.events.filter(e=>e.rec==='weekly'||e.week===now.week);
+  upd(Object.assign({},patch,{override:{plan:buildPlan(S2,plan,isDone,{d:now.day,m:now.min},null,{evts:ev2,todos:st.todos})}}));
+ };
+ const newId=()=>Date.now().toString(36)+Math.floor(Math.random()*1000);
+ const saveEvent=ev=>{
+  const list=ev.id?store.events.map(x=>x.id===ev.id?ev:x):store.events.concat([Object.assign({},ev,{id:newId()})]);
+  applyChange({events:list});
+  toast(ev.id?'Modifié, le planning est réorganisé.':'Ajouté, le planning est réorganisé autour.');
+ };
+ const deleteEvent=id=>{applyChange({events:store.events.filter(x=>x.id!==id)});toast('Supprimé, le planning est réorganisé.');};
+ const setShiftOv=(d,val)=>{const mp=Object.assign({},shiftMap);if(val===undefined)delete mp[d];else mp[d]=val;applyChange({shiftOv:{week:now.week,map:mp}});};
+ const capMap=(store.capOv&&store.capOv.week===now.week)?store.capOv.map:{};
+ const setCapMul=(d,mul)=>{const mp=Object.assign({},capMap);if(mul===1)delete mp[d];else mp[d]=mul;applyChange({capOv:{week:now.week,map:mp}});toast(mul===0?'Jour de repos : plus d’étude planifiée ce jour-là.':'Charge du jour modifiée.');};
+ const saveTodo=t=>{
+  const list=t.id?store.todos.map(x=>x.id===t.id?Object.assign({},x,t):x):store.todos.concat([Object.assign({done:false},t,{id:newId()})]);
+  applyChange({todos:list});toast(t.id?'Tâche modifiée.':'Tâche ajoutée, un créneau lui est réservé.');
+ };
+ const deleteTodo=id=>{applyChange({todos:store.todos.filter(x=>x.id!==id)});};
+ const setTodoDone=(id,flag)=>{applyChange({todos:store.todos.map(x=>x.id===id?Object.assign({},x,{done:flag}):x)});};
+ const openEditor=dr=>{setDraft(dr);setTab('evenements');};
+ let streak=0;
+ {const hist=store.hist||{};let dt=now.iso;if(!(hist[dt]>0))dt=addDays(dt,-1);while(hist[dt]>0&&streak<400){streak++;dt=addDays(dt,-1);}}
+ const dExam=daysTo(S0.examDate,now.iso);
+ const dueCards=store.cards.filter(c=>c.due<=now.iso).length;
+ const C={store:store,S:S,S0:S0,plan:plan,pos:pos,sel:sel,now:now,done:done,focus:focus,tm:tm,upd:upd,setS:setS,setPref:setPref,setTheme:setTheme,setSel:setSel,setTab:setTab,setFocus:k=>setFocus(f=>f===k?null:k),setTm:setTm,setStore:setStore,toggleDone:toggleDone,startTimer:startTimer,replanNow:replanNow,replanMissed:replanMissed,addUnforeseen:addUnforeseen,toast:toast,evts:evts,events:store.events,shiftMap:shiftMap,draft:draft,setDraft:setDraft,openEditor:openEditor,saveEvent:saveEvent,deleteEvent:deleteEvent,setShiftOv:setShiftOv,setCapMul:setCapMul,saveTodo:saveTodo,deleteTodo:deleteTodo,setTodoDone:setTodoDone,reviseDeck:reviseDeck,setReviseDeck:setReviseDeck};
+ const tabs=[['jour','Jour'],['semaine','Semaine'],['evenements','Rendez-vous'],['taches','Tâches'],['reviser','Réviser'+(dueCards?' ('+dueCards+')':'')],['modules','Modules'],['suivi','Suivi'],['reglages','Réglages']];
+ let content;
+ if(tab==='jour')content=h(DayTab,{C:C});
+ else if(tab==='semaine')content=h(WeekTab,{C:C});
+ else if(tab==='evenements')content=h(EventsTab,{C:C});
+ else if(tab==='taches')content=h(TodosTab,{C:C});
+ else if(tab==='reviser')content=h(ReviseTab,{C:C});
+ else if(tab==='modules')content=h(ModulesTab,{C:C});
+ else if(tab==='suivi')content=h(TrackTab,{C:C});
+ else content=h(SettingsTab,{C:C});
+ return h('div',{className:'app'},
+  h('header',{className:'top'},h('div',null,h('h1',null,'Agenda sabbatique'),h('p',{className:'sub'},'Une journée à la fois, et le plan se fait tout seul.')),
+   h('div',{className:'chipcol'},streak>0?h('span',{className:'streak'},'Série : '+streak+' jour'+(streak>1?'s':'')):null,dExam!==null&&dExam>=0?h('span',{className:'streak alt'},'J-'+dExam+(S0.examLabel?' : '+S0.examLabel:'')):null)),
+  h('nav',{className:'tabs',role:'tablist'},tabs.map(t=>h('button',{key:t[0],role:'tab','aria-selected':tab===t[0],className:tab===t[0]?'on':'',onClick:()=>setTab(t[0])},t[1]))),
+  h('main',null,content),
+  msg?h('div',{className:'toast',role:'status'},msg):null);
+}
+class EB extends React.Component{
+ constructor(p){super(p);this.state={e:null};}
+ static getDerivedStateFromError(e){return {e:e};}
+ render(){
+  if(this.state.e)return h('div',{className:'app'},h('div',{className:'card'},h('h2',null,'Une erreur est survenue'),h('p',null,String((this.state.e&&this.state.e.message)||this.state.e)),h('button',{className:'btn',onClick:()=>{try{localStorage.removeItem(KEY);}catch(x){}location.reload();}},'Réinitialiser les données')));
+  return this.props.children;
+ }
+}
+if(typeof __EXPORT__==='function'){__EXPORT__({buildPlan:buildPlan,planDay:planDay,STUDY:STUDY,DEFAULTS:DEFAULTS,blockKey:blockKey,wakeOf:wakeOf,bedOf:bedOf,roomSVG:roomSVG,streetSVG:streetSVG,sceneInfo:sceneInfo,App:App,DayTab:DayTab,WeekTab:WeekTab,ModulesTab:ModulesTab,TrackTab:TrackTab,SettingsTab:SettingsTab,EventsTab:EventsTab,TodosTab:TodosTab,ReviseTab:ReviseTab,mergeS:mergeS,syncCustom:syncCustom,placeTodos:placeTodos,buildICS:buildICS,load:load,nextTask:nextTask,blockAt:blockAt,fmt:fmt,MOD:MOD});}
+else ReactDOM.createRoot(document.getElementById('root')).render(h(EB,null,h(App)));
+})();
+
+</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}</script>
+</body>
+</html>

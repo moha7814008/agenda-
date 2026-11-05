@@ -1,0 +1,16 @@
+{
+  "name": "Agenda sabbatique",
+  "short_name": "Agenda",
+  "description": "Planning de l’année sabbatique : études, sport, revenus, rendez-vous.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E9F0EF",
+  "theme_color": "#2F5BEA",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}
